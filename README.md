@@ -2,6 +2,8 @@
 
 A reusable template for documenting a product's UX before you build it: information architecture, navigation by screen size, wireframes, a visual system and styled screens. You describe the product in one YAML file and a small Python script renders print-ready boards as HTML, PDF and PNG.
 
+**See it working:** [shazmoghaddam.github.io/ux-boards](https://shazmoghaddam.github.io/ux-boards/) shows the boards for two example products.
+
 It started as the UX documentation for a product I'm building. The structure turned out to be the useful part, so this repo keeps the structure and swaps every project detail for placeholders.
 
 ![Information architecture board from the Bindery example](examples/bindery/out/01-information-architecture.png)
@@ -52,17 +54,29 @@ ux-boards/
 ├── template/
 │   └── spec.yaml              # the starter spec, every project detail is a TODO
 ├── examples/
-│   └── bindery/               # a fictional bookshop app, fully filled in
+│   ├── bindery/               # a fictional bookshop app, staff-facing
+│   │   ├── spec.yaml
+│   │   └── out/               # index.html, boards.pdf and one PNG per board
+│   └── belaybook/             # a fictional climbing gym booking app, member-facing
 │       ├── spec.yaml
-│       └── out/               # index.html, boards.pdf and one PNG per board
+│       └── out/
+├── site/
+│   └── index.html             # the landing page for the GitHub Pages demo
 └── docs/
     ├── GUIDE.md               # the method: why each board exists and how to fill it in
     └── SPEC.md                # every key and block type the spec understands
 ```
 
-## The example
+## The examples
 
-[examples/bindery](examples/bindery) documents Bindery, a made-up stock and customer-orders app for independent bookshops. It shows every board type and most block types, and the rendered PDF is in [examples/bindery/out/boards.pdf](examples/bindery/out/boards.pdf). Every name, number and customer in it is invented.
+Two fully filled-in specs, chosen to be as different as possible so you can see the template isn't tied to one kind of product. Every name, number and person in them is invented.
+
+| Example | What it is | Boards |
+| --- | --- | --- |
+| [Bindery](examples/bindery/spec.yaml) | Stock and customer orders for independent bookshops. Staff-facing, used at the counter and in the back office | [live](https://shazmoghaddam.github.io/ux-boards/bindery/) · [PDF](examples/bindery/out/boards.pdf) |
+| [Belaybook](examples/belaybook/spec.yaml) | Class and session booking for climbing gym members. Customer-facing, used mostly on a phone | [live](https://shazmoghaddam.github.io/ux-boards/belaybook/) · [PDF](examples/belaybook/out/boards.pdf) |
+
+The demo site is rebuilt from the specs on every push to `main` by `.github/workflows/pages.yml`. If you fork the repo and want your own demo, set **Settings → Pages → Source** to **GitHub Actions**.
 
 ## Adapting it
 

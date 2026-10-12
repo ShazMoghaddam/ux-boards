@@ -1,0 +1,777 @@
+
+
+
+
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Belaybook UX boards</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&amp;family=Inter:wght@400;600;700&amp;display=swap"><style>
+@page { size: 1400px 990px; margin: 0; }
+:root { --W: 1400px; --H: 990px; --PAD: 56px;
+  --serif: Fraunces, Georgia, serif;
+  --sans: Inter, &#39;Helvetica Neue&#39;, Arial, sans-serif; }
+/* ux-boards stylesheet. Board chrome is neutral greyscale; screen frames read
+   their colours from CSS variables so the same markup renders as a wireframe
+   or in the project's visual system. */
+
+* { box-sizing: border-box; }
+html, body { margin: 0; background: #E9E9E9; }
+body { font: 14px/1.45 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #1D1D1D; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+@media screen { body { padding: 24px 0; } .board { margin: 0 auto 24px; box-shadow: 0 1px 4px rgba(0,0,0,.12); } }
+code { font: 12px/1.4 ui-monospace, Menlo, Consolas, monospace; color: #555; }
+.small { font-size: 12px; }
+.muted { color: #666; }
+
+/* ---------------------------------------------------------------- board */
+.board { width: var(--W); height: var(--H); padding: var(--PAD); background: #fff; overflow: hidden; break-after: page; position: relative; }
+.bh { border-bottom: 1px solid #1D1D1D; padding-bottom: 20px; margin-bottom: 28px; }
+.bh h1 { font-size: 36px; line-height: 1.1; margin: 6px 0 10px; letter-spacing: -.01em; }
+.bh .lede { max-width: 760px; margin: 0; font-size: 15px; color: #333; }
+.bh-row { display: flex; justify-content: space-between; align-items: flex-end; gap: 40px; }
+.eyebrow, .label { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: #555; }
+.label { font-weight: 600; margin-bottom: 8px; }
+.legend { display: flex; gap: 18px; font-size: 12px; white-space: nowrap; }
+.legend.small { white-space: normal; max-width: 330px; color: #444; display: block; }
+.mark { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 50%; border: 1px solid #1D1D1D; font-size: 10px; flex: none; }
+.mark.next { border-style: dashed; color: #555; }
+
+/* ---------------------------------------------------------------- IA */
+.ia { display: grid; grid-template-columns: repeat(var(--n), 1fr); border-left: 1px solid #DDD; }
+.sec { padding: 0 18px; border-right: 1px solid #DDD; min-height: 360px; }
+.sec h2 { font-size: 20px; margin: 4px 0 6px; }
+.sec .q { margin: 0 0 12px; color: #333; min-height: 40px; }
+.pg { display: flex; gap: 10px; padding: 9px 0; border-top: 1px solid #E2E2E2; }
+.pg b { display: block; }
+.pg > div > code, .pg > div > span { display: block; font-size: 11.5px; }
+.pg > div > span { color: #555; }
+.journeys { margin-top: 26px; }
+.jr { display: grid; grid-template-columns: 160px 1fr; align-items: center; margin: 7px 0; }
+.steps { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.step { border: 1px solid #1D1D1D; border-radius: 3px; padding: 3px 9px; font-size: 12px; }
+.step.end { background: #1D1D1D; color: #fff; }
+.step.next { border-style: dashed; }
+.arr, .or { color: #777; font-size: 12px; }
+.or { margin: 0 6px; }
+.notes { display: grid; grid-template-columns: repeat(var(--n), 1fr); gap: 36px; margin-top: 24px; padding-top: 18px; border-top: 1px solid #DDD; }
+.notes p { margin: 0; font-size: 12.5px; }
+
+/* ---------------------------------------------------------------- breakpoints */
+.devices { display: flex; gap: 44px; align-items: flex-end; margin-bottom: 22px; }
+.devc h3 { font-size: 14px; margin: 12px 0 4px; }
+.devc p { margin: 0; font-size: 12px; max-width: 520px; color: #333; }
+.devc-phone { width: 210px; } .devc-tablet { width: 330px; } .devc-desktop, .devc-laptop { flex: 1; }
+.sketch { border: 1.5px solid #1D1D1D; border-radius: 12px; display: flex; position: relative; overflow: hidden; }
+.sketch i, .sketch b, .sketch em { display: block; height: 5px; background: #D5D5D5; border-radius: 3px; margin: 6px 0; }
+.sketch b { background: #1D1D1D; width: 45%; height: 6px; }
+.sketch em { height: 14px; background: none; border: 1px solid #CCC; }
+.sk-phone { width: 130px; height: 230px; flex-direction: column; padding: 10px; border-radius: 18px; }
+.sk-top { height: 10px; border-bottom: 1px solid #CCC; margin-bottom: 4px; }
+.sk-lines { flex: 1; padding: 0 4px; }
+.sk-tabs { display: flex; justify-content: space-around; border-top: 1px solid #1D1D1D; padding-top: 8px; }
+.sk-tabs i, .sk-rail i { width: 10px; height: 10px; border: 1px solid #555; background: none; border-radius: 2px; margin: 0; }
+.sk-tabs i.on, .sk-rail i.on { background: #1D1D1D; }
+.sk-tablet { width: 210px; height: 270px; }
+.sk-rail { width: 46px; border-right: 1px solid #1D1D1D; display: flex; flex-direction: column; align-items: center; gap: 14px; padding-top: 18px; }
+.sk-tablet .sk-lines { padding: 14px; }
+.sk-desktop, .sk-laptop { height: 230px; }
+.sk-side { width: 125px; border-right: 1px solid #1D1D1D; padding: 14px; position: relative; }
+.sk-side span { position: absolute; bottom: 14px; left: 14px; right: 30px; height: 12px; border-top: 4px solid #D5D5D5; border-bottom: 4px solid #D5D5D5; }
+.sk-desktop .sk-lines, .sk-laptop .sk-lines { padding: 14px; }
+.sk-panel { width: 150px; border-left: 1.5px dashed #888; padding: 14px; }
+.ptable { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+.ptable th, .ptable td { text-align: left; vertical-align: top; padding: 7px 14px 7px 0; border-bottom: 1px solid #E2E2E2; }
+.ptable thead th { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: #555; border-bottom: 1px solid #1D1D1D; }
+.ptable tbody th { width: 150px; }
+
+/* ---------------------------------------------------------------- screen boards */
+.frames { display: flex; gap: 40px; align-items: flex-start; }
+.frames figure { margin: 0; }
+.frames figcaption { font-size: 18px; color: #555; margin-top: 10px; }
+
+/* device shell */
+.dev { display: flex; background: var(--surface); color: var(--ink); font-family: var(--sans); font-size: 16px; line-height: 1.45; border: 2px solid #1D1D1D; border-radius: 22px; overflow: hidden; position: relative; }
+.dev-desktop { border-radius: 10px; }
+.wire .dev { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
+.dev .col { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.dev .body { flex: 1; padding: 28px 32px; overflow: hidden; }
+.dev-phone .body { padding: 22px 20px; }
+.dev-desktop .body { padding: 36px 48px; }
+.appbar { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; height: 60px; padding: 0 20px; border-bottom: 1px solid var(--rule); background: var(--shelf); font-size: 16px; }
+.appbar .r { text-align: right; }
+.appbar span { color: var(--primary); }
+.wire .appbar span { color: var(--ink); }
+.footer { padding: 14px 20px 18px; border-top: 1px solid var(--rule); }
+.footer .b-text { text-align: center; margin: 0 0 10px; }
+
+/* navigation */
+.nicon { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.5; flex: none; }
+.ni { color: var(--muted); }
+.ni.on { color: var(--ink); font-weight: 600; }
+.tabs { display: flex; justify-content: space-around; border-top: 1px solid var(--ink); padding: 10px 0 18px; background: var(--shelf); }
+.tabs .ni { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 13px; }
+.styled .tabs .ni.on { color: var(--primary); }
+.styled .tabs .ni.on .nicon { background: var(--tint); border-radius: 12px; padding: 2px 14px; width: 52px; }
+.rail { width: 88px; border-right: 1.5px solid var(--ink); display: flex; flex-direction: column; align-items: center; gap: 22px; padding-top: 22px; background: var(--shelf); }
+.rail .brand { font-weight: 700; margin-bottom: 10px; }
+.rail .ni { display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 12px; width: 100%; border-left: 3px solid transparent; padding: 2px 0; }
+.rail .ni.on { border-left-color: var(--ink); }
+.side { width: 248px; border-right: 1.5px solid var(--ink); padding: 26px 16px; display: flex; flex-direction: column; gap: 4px; background: var(--shelf); }
+.styled .side { border-right: 0; }
+.side .brand { font-size: 20px; font-weight: 700; margin: 0 10px 20px; font-family: var(--serif); }
+.wire .side .brand { font-family: inherit; }
+.side .ni { display: flex; align-items: center; gap: 12px; padding: 9px 12px; border-radius: 6px; color: var(--ink); }
+.side .ni.on { background: var(--tint); }
+.styled .side .ni.on { color: var(--primary); }
+.side .foot { margin-top: auto; border-top: 1px solid var(--rule); padding-top: 16px; font-size: 13px; color: var(--muted); }
+.side .foot .b { color: var(--ink); font-weight: 700; }
+.panel { width: 300px; border-left: 1px solid var(--rule); padding: 36px 28px; }
+.wire .panel { border-left: 1.5px solid var(--ink); }
+
+/* blocks */
+.b-eyebrow { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+.b-title { font-size: 34px; line-height: 1.15; margin: 0 0 10px; font-weight: 700; }
+.b-title.small { font-size: 24px; }
+.styled .b-title, .styled .b-heading h2, .styled .group, .styled .ruled-title { font-family: var(--serif); font-weight: 600; }
+.b-heading { display: flex; justify-content: space-between; align-items: baseline; margin: 26px 0 8px; }
+.b-heading h2 { font-size: 20px; margin: 0; }
+.b-heading .aside { font-weight: 400; color: var(--muted); }
+.b-text { margin: 0 0 14px; }
+.b-text.muted { color: var(--muted); }
+.b-text.small { font-size: 14px; }
+.link { text-decoration: underline; color: var(--primary); font-weight: 600; }
+.wire .link { font-weight: 400; color: var(--ink); }
+.b-button { margin: 16px 0; }
+.b-buttons { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.b-header { display: flex; justify-content: space-between; align-items: center; gap: 24px; margin-bottom: 20px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 20px; border-radius: 4px; font-weight: 700; font-size: 16px; border: 1.5px solid var(--ink); background: var(--surface); color: var(--ink); }
+.btn.primary { background: var(--primary); border-color: var(--primary); color: var(--primary-ink); }
+.btn.ghost { border-color: transparent; background: none; text-decoration: underline; color: var(--primary); }
+.btn.danger { border-color: var(--danger); color: var(--danger); font-weight: 600; }
+.btn.disabled { background: var(--tint); border-color: var(--tint); color: var(--muted); }
+.btn.focused { background: var(--primary); color: var(--primary-ink); border-color: var(--primary); box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--ink); }
+.btn.full { display: flex; width: 100%; min-height: 54px; font-size: 18px; }
+.ico { font-weight: 400; }
+
+.seg { position: relative; display: grid; grid-template-columns: repeat(var(--n), 1fr); gap: 6px; margin: 22px 0; }
+.seg .ticks { grid-column: 1 / -1; display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); }
+.seg.has-marker { padding-top: 24px; }
+.seg .marker { position: absolute; top: 0; height: 40px; border-left: 2px solid var(--ink); z-index: 1; }
+.seg .marker span { position: absolute; top: 0; left: 6px; line-height: 1; font-size: 11px; font-weight: 700; white-space: nowrap; background: var(--surface); }
+.bar { height: 10px; border-radius: 1px; }
+.bar.done { background: var(--ink); }
+.bar.current { background: var(--primary); }
+.wire .bar.current { background: var(--surface); border: 2px solid var(--ink); }
+.bar.progress { background: var(--surface); border: 1.5px solid var(--primary); }
+.wire .bar.progress { background: #CFCFCF; border: 0; }
+.bar.todo { background: var(--surface); border: 1px solid var(--rule); }
+.wire .bar.todo { background: #EDEDED; border: 0; }
+.seglabel { font-size: 15px; margin-top: 8px; }
+.segsub { font-size: 14px; color: var(--muted); }
+.segsub.strong { color: var(--primary); font-weight: 600; }
+.wire .segsub.strong { color: var(--ink); }
+
+.rows { margin: 4px 0 14px; }
+.row { display: flex; gap: 16px; padding: 9px 0; border-top: 1px solid var(--rule); }
+.row > span:first-child { flex: 1; }
+.row .num { min-width: 96px; text-align: right; }
+.row.strong { border-top: 2px solid var(--ink); font-weight: 700; }
+.row.muted { color: var(--muted); font-size: 14px; border-top: 0; padding-top: 2px; }
+.row.indent { padding-left: 16px; color: var(--muted); font-size: 14px; border-top: 0; padding-top: 3px; padding-bottom: 3px; }
+.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+.list .group { font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); padding: 22px 0 8px; border-bottom: 2px solid var(--ink); }
+.styled .list .group { text-transform: none; letter-spacing: 0; font-size: 20px; color: var(--ink); }
+.li { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--rule); min-height: 56px; }
+.li-title { font-size: 17px; }
+.li-meta { font-size: 14px; color: var(--muted); }
+.li-value { font-weight: 600; }
+.li-value.warn { background: var(--warning-bg); color: var(--warning); padding: 2px 10px; border-radius: 4px; }
+.wire .li-value.warn { border: 1px solid var(--ink); }
+
+.t { width: 100%; border-collapse: collapse; font-size: 15px; }
+.t th { text-align: left; font-weight: 600; color: var(--muted); font-size: 14px; padding: 8px 10px 8px 0; border-bottom: 2px solid var(--ink); }
+.t td { padding: 10px 10px 10px 0; border-bottom: 1px solid var(--rule); height: 44px; }
+.t .r { text-align: right; }
+.t tr.hl td { background: var(--tint); font-weight: 600; }
+.t tr.hl td:first-child { box-shadow: inset 3px 0 0 var(--ink); padding-left: 8px; }
+.t tr.grp td { font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); padding-top: 16px; }
+.t-foot { display: flex; justify-content: space-between; margin-top: 14px; font-size: 14px; color: var(--muted); }
+.t-foot span:last-child { text-decoration: underline; color: var(--primary); }
+
+.stepper { display: grid; grid-template-columns: repeat(var(--n), 1fr); gap: 8px; margin-bottom: 10px; }
+.stepper .st { border-top: 5px solid #DDD; padding-top: 6px; font-size: 14px; color: var(--muted); }
+.stepper .st.on { border-top-color: var(--primary); }
+.wire .stepper .st.on { border-top-color: var(--ink); }
+.stepper .st.on:last-of-type, .stepper .st.on + .st:not(.on) { }
+
+.choices { display: flex; flex-direction: column; gap: 14px; margin: 18px 0; }
+.choice { display: flex; gap: 16px; border: 1.5px solid var(--rule); border-radius: 8px; padding: 18px; }
+.choice.on { border: 2.5px solid var(--ink); }
+.choice b { font-size: 18px; }
+.radio { width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid var(--muted); flex: none; margin-top: 2px; }
+.choice.on .radio { border: 2px solid var(--ink); background: radial-gradient(var(--ink) 45%, transparent 50%); }
+.check { display: flex; gap: 16px; align-items: flex-start; margin: 22px 0; }
+.check.boxed { border: 1.5px solid var(--muted); border-radius: 8px; padding: 18px; }
+.box { width: 28px; height: 28px; border: 1.5px solid var(--muted); border-radius: 4px; flex: none; }
+.callout { border-left: 4px solid var(--ink); padding: 4px 0 4px 22px; margin: 22px 0; }
+.callout p { margin: 0 0 10px; }
+.chips { display: flex; gap: 10px; flex-wrap: wrap; margin: 14px 0; }
+.chip { border-radius: 20px; background: #EEE; padding: 6px 14px; font-size: 14px; }
+.chip.on { background: var(--surface); border: 1.5px solid var(--ink); }
+.styled .chip { background: none; padding-left: 0; color: var(--muted); }
+.styled .chip.on { background: var(--tint); border: 0; border-radius: 4px; padding-left: 14px; color: var(--primary); font-weight: 700; }
+.search { display: flex; gap: 12px; margin: 10px 0; }
+.input { display: flex; align-items: center; min-height: 48px; padding: 0 14px; border: 1.5px solid var(--muted); border-radius: 4px; flex: 1; color: var(--muted); background: var(--surface); }
+.input.select::after { content: '⌄'; margin-left: auto; }
+.filters { display: flex; gap: 12px; margin: 8px 0 14px; }
+.filters label { display: flex; flex-direction: column; gap: 4px; font-size: 14px; flex: 1; }
+.filters label:first-child { flex: 2; }
+.fields { display: flex; gap: 28px; }
+.field { display: flex; flex-direction: column; gap: 4px; margin: 10px 0; flex: 1; }
+.field .hint { font-size: 14px; color: var(--muted); }
+.field .input { color: var(--ink); max-width: 260px; }
+.field.error { border-left: 3px solid var(--danger); padding-left: 14px; }
+.field .err { color: var(--danger); font-weight: 600; font-size: 14px; }
+.field.error .input { border: 2px solid var(--danger); }
+.status { display: flex; gap: 22px; flex-wrap: wrap; align-items: center; font-size: 14px; margin: 18px 0; }
+.status span { display: inline-flex; align-items: center; gap: 7px; }
+.status i { width: 14px; height: 14px; border-radius: 50%; border: 1.5px solid var(--ink); display: inline-block; }
+.status .st-check i { background: var(--surface); }
+.status .st-check i::after { content: '✓'; font-size: 10px; display: block; text-align: center; line-height: 11px; }
+.status .st-dot { color: var(--primary); font-weight: 700; }
+.status .st-dot i { background: var(--primary); border-color: var(--primary); }
+.status .st-half i { background: linear-gradient(90deg, var(--ink) 50%, transparent 50%); }
+.status .st-dashed i { border-style: dashed; border-color: var(--muted); }
+.status .st-warn { background: var(--warning-bg); color: var(--warning); padding: 3px 10px; border-radius: 4px; font-weight: 600; }
+.status .st-warn i { border-radius: 0; border: 0; width: 0; height: 0; border-left: 7px solid transparent; border-right: 7px solid transparent; border-bottom: 12px solid var(--warning); }
+.checklist div { padding: 3px 0; }
+.success .tick { display: inline-flex; width: 76px; height: 76px; border: 2px solid var(--ink); border-radius: 50%; align-items: center; justify-content: center; font-size: 30px; margin-bottom: 18px; }
+.code { font: 600 30px/1.3 ui-monospace, Menlo, Consolas, monospace; letter-spacing: .04em; margin: 4px 0 14px; word-break: break-all; }
+.divider { border: 0; border-top: 1px solid var(--rule); margin: 22px 0; }
+.b-cols { display: grid; grid-template-columns: repeat(var(--n), 1fr); gap: 48px; }
+.b-unknown { border: 2px dashed red; color: red; padding: 6px; }
+
+/* ---------------------------------------------------------------- visual system */
+.vis { color: var(--ink); }
+.vis .serif { font-family: var(--serif); font-weight: 600; }
+.vis .bh { border-bottom-color: var(--ink); }
+.vis h2 { font-size: 22px; margin: 0 0 10px; }
+.vis-grid h2:not(:first-child) { margin-top: 26px; }
+.vis-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; font-family: var(--sans); }
+.ctable { width: 100%; border-collapse: collapse; font-size: 12.5px; margin-bottom: 8px; }
+.ctable th { text-align: left; font-weight: 600; font-size: 11.5px; color: var(--muted); padding: 4px 6px; border-bottom: 1px solid var(--ink); }
+.ctable td { padding: 6px; border-bottom: 1px solid var(--rule); }
+.ctable .r { text-align: right; white-space: nowrap; }
+.ctable .fail { color: #B00020; font-weight: 700; }
+.sw { display: flex; align-items: center; justify-content: center; width: 34px; height: 20px; border-radius: 3px; border: 1px solid rgba(0,0,0,.08); }
+.sw i { width: 20px; height: 8px; display: block; }
+.rule-note { margin: 4px 0; }
+.tscale { margin-top: 4px; }
+.tscale .tr { display: grid; grid-template-columns: 130px 1fr; gap: 16px; align-items: center; padding: 5px 0; }
+.sig { margin-bottom: 18px; }
+.sig .seg { margin-top: 30px; }
+.comps { font-size: 15px; }
+.comps .b-buttons { margin-bottom: 12px; }
+.comps .btn { font-size: 14px; min-height: 38px; padding: 0 14px; }
+.comps .field .input { min-height: 38px; }
+.comps .t { font-size: 13px; }
+.comps .t td { height: 34px; padding: 6px 8px 6px 0; }
+.comps .status { margin: 10px 0; font-size: 13px; }
+.tokens { display: grid; grid-template-columns: 90px 1fr; gap: 4px 12px; font-size: 12px; margin: 16px 0 0; }
+.tokens dt { color: var(--muted); }
+.tokens dd { margin: 0; }
+
+</style>
+</head>
+<body>
+
+<section class="board" data-name="Information architecture" data-slug="information-architecture">
+  <header class="bh">
+    <div class="eyebrow">Belaybook · Step 1 of 3 · Structure</div>
+    <div class="bh-row">
+      <div><h1>Information architecture</h1><p class="lede">Five sections, ordered by how often a member opens them in a week. These boards fix structure and behaviour only. Visual style comes in step 2.</p></div>
+      <div class="legend"><span><span class="mark" title="First release">1</span> First release</span><span><span class="mark next" title="Next release">2</span> Next release</span></div>
+    </div>
+  </header>
+  <div class="ia" style="--n: 5">
+    <div class="sec">
+      <code>/</code>
+      <h2>Home</h2>
+<p class="q">When am I next climbing, and is anything about to change?</p>      <div class="pg"><span class="mark" title="First release">1</span><div><b>Home</b><span>Next session, this week, check-in code</span></div></div>
+      <div class="pg"><span class="mark" title="First release">1</span><div><b>First-run setup</b><span>Same address. Membership, waiver and a first booking</span></div></div>
+    </div>
+    <div class="sec">
+      <code>/timetable</code>
+      <h2>Timetable</h2>
+<p class="q">What can I book, and when is there space?</p>      <div class="pg"><span class="mark" title="First release">1</span><div><b>Timetable</b><span>Filter by day, class type, level. Spaces left on every class</span></div></div>
+      <div class="pg"><span class="mark" title="First release">1</span><div><b>Class</b><code>/timetable/:id</code><span>Instructor, level, spaces, what to bring</span></div></div>
+      <div class="pg"><span class="mark" title="First release">1</span><div><b>Book</b><code>/timetable/:id/book</code></div></div>
+      <div class="pg"><span class="mark next" title="Next release">2</span><div><b>Waiting list</b><code>/timetable/:id/wait</code><span>Join, see your place, get a text when a space opens</span></div></div>
+    </div>
+    <div class="sec">
+      <code>/bookings</code>
+      <h2>Bookings</h2>
+<p class="q">What have I booked, and can I change it?</p>      <div class="pg"><span class="mark" title="First release">1</span><div><b>Upcoming</b><span>Grouped by day, cancel or move</span></div></div>
+      <div class="pg"><span class="mark" title="First release">1</span><div><b>Booking</b><code>/bookings/:id</code><span>Check-in code, cancellation deadline</span></div></div>
+      <div class="pg"><span class="mark next" title="Next release">2</span><div><b>History</b><span>Every visit, with a running total</span></div></div>
+    </div>
+    <div class="sec">
+      <code>/membership</code>
+      <h2>Membership</h2>
+<p class="q">What does my plan include, and what is left?</p>      <div class="pg"><span class="mark" title="First release">1</span><div><b>My plan</b><span>Credits left, renewal date</span></div></div>
+      <div class="pg"><span class="mark" title="First release">1</span><div><b>Change plan</b><code>/membership/change</code></div></div>
+      <div class="pg"><span class="mark next" title="Next release">2</span><div><b>Guest passes</b><code>/membership/guests</code></div></div>
+    </div>
+    <div class="sec">
+      <code>/account</code>
+      <h2>Account</h2>
+<p class="q">Who you are to the gym.</p>      <div class="pg"><span class="mark" title="First release">1</span><div><b>Details and waiver</b><code>/account/details</code><span>Name, emergency contact, waiver status</span></div></div>
+      <div class="pg"><span class="mark next" title="Next release">2</span><div><b>Notifications</b><span>Reminders, waiting list texts</span></div></div>
+    </div>
+  </div>
+  <div class="journeys"><div class="label">Main journeys</div>
+    <div class="jr"><b>Book a class</b><div class="steps">
+<span class="step">Home headline</span>
+<span class="arr">→</span><span class="step">Timetable</span>
+<span class="arr">→</span><span class="step">Class</span>
+<span class="arr">→</span><span class="step">Check credits</span>
+<span class="arr">→</span><span class="step">Confirm</span>
+<span class="arr">→</span><span class="step end">Booked with code</span>
+    </div></div>
+    <div class="jr"><b>Class is full</b><div class="steps">
+<span class="step">Class</span>
+<span class="arr">→</span><span class="step end">Full, try another time</span>
+<span class="or">or</span><span class="step next">Join waiting list</span>
+<span class="arr">→</span><span class="step next">Space opens</span>
+<span class="arr">→</span><span class="step next">Confirm by text</span>
+    </div></div>
+    <div class="jr"><b>First run</b><div class="steps">
+<span class="step">Create account</span>
+<span class="arr">→</span><span class="step">Choose a plan</span>
+<span class="arr">→</span><span class="step">Sign the waiver</span>
+<span class="arr">→</span><span class="step end">First booking</span>
+    </div></div>
+  </div>
+  <div class="notes" style="--n: 3"><div><div class="label">Cross-links</div><p>A booking opens its class. A class shows your other bookings that day. The Home headline goes straight to the next booking and its check-in code.</p></div><div><div class="label">Outside the sections</div><p>Sign in. Public timetable for people who are not members yet. Not found. Payment errors that say what to try next.</p></div><div><div class="label">The API needs two additions</div><p>1. Spaces left per class in the timetable list, not only on the class. 2. A booking endpoint that returns the check-in code.</p></div></div>
+</section>
+
+<section class="board" data-name="Navigation by screen size" data-slug="navigation-by-screen-size">
+  <header class="bh">
+    <div class="eyebrow">How the same structure adapts</div>
+    <h1>Navigation by screen size</h1>
+<p class="lede">Members book on their phones, often in the changing room, so the phone gets the most care. The front desk runs a tablet; staff schedule classes on a laptop.</p>  </header>
+  <div class="devices">
+    <div class="devc devc-phone">
+      <div class="sketch sk-phone">
+<div class="sk-top"></div><div class="sk-lines"><i></i><i></i><i></i><i></i></div><div class="sk-tabs"><i class="on"></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i></div>
+      </div>
+      <h3>Phone · under 768</h3>
+      <p>Bottom tab bar, five labelled tabs. The next booking and its code are never more than one tap away.</p>
+    </div>
+    <div class="devc devc-tablet">
+      <div class="sketch sk-tablet">
+<div class="sk-rail"><i class="on"></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i></div><div class="sk-lines"><b></b><i></i><i></i><i></i><i></i></div>
+      </div>
+      <h3>Tablet · 768 to 1199</h3>
+      <p>An 88 px rail. At the front desk it shows today&#39;s classes with names, in landscape.</p>
+    </div>
+    <div class="devc devc-desktop">
+      <div class="sketch sk-desktop">
+<div class="sk-side"><b></b><b></b><i></i><i></i><i></i><i></i><span></span></div><div class="sk-lines"><b></b><em></em><i></i><i></i><i></i><i></i></div><div class="sk-panel"><b></b><i></i><i></i></div>      </div>
+      <h3>Laptop 1200 to 1599 · Desktop 1600 and up</h3>
+      <p>A 248 px sidebar. Class detail opens in a right panel beside the week&#39;s timetable.</p>
+    </div>
+  </div>
+  <table class="ptable"><thead><tr><th>Pattern</th><th>Phone</th><th>Tablet</th><th>Laptop and desktop</th></tr></thead><tbody>
+<tr><th>Page actions</th><td>One primary action in the header; the rest in a More menu</td><td>Primary and one secondary action in the header</td><td>All actions in the header, primary rightmost</td></tr><tr><th>Timetable</th><td>One day at a time, swipe or tap a day; spaces left on the right</td><td>Two days side by side</td><td>The whole week as columns; full classes stay visible and say so</td></tr><tr><th>Filters</th><td>Filters button opens a bottom sheet; active filters show as removable chips</td><td>Filters button opens a popover; chips below the search</td><td>Inline filter bar; every choice visible</td></tr><tr><th>Detail</th><td>Full screen with a back button</td><td>Side sheet over the timetable</td><td>Right panel beside the timetable</td></tr><tr><th>Booking</th><td>Full-screen task; tabs hidden; Exit at top left</td><td colspan="2">A centred 560 px column with a step indicator; navigation hidden behind an Exit link</td></tr>  </tbody></table>
+</section>
+
+<section class="board" data-name="Home, phone and tablet" data-slug="home-phone-and-tablet">
+  <header class="bh">
+    <div class="eyebrow">Step 1 · Wireframes · <code>/</code></div>
+    <h1>Home, phone and tablet</h1>
+<p class="lede">The next session first, with its check-in code, then the week. Nothing to configure before booking again.</p>  </header>
+  <div class="frames wire" style="--ink: #1F1F1F; --muted: #6B6B6B; --primary: #1F1F1F; --primary-ink: #FFFFFF; --tint: #EFEFEF; --surface: #FFFFFF; --shelf: #FFFFFF; --rule: #DADADA; --danger: #1F1F1F; --warning: #1F1F1F; --warning-bg: #EFEFEF;  zoom: 0.5915">
+    <figure><div class="dev dev-phone" style="width: 390px; height: 844px">
+  <div class="col">
+<div class="appbar"><span>Belaybook</span><b></b><span class="r">6 credits</span></div>    <main class="body"><div class="b-eyebrow">Next session</div>
+<h1 class="b-title">Intro to lead, tomorrow at 7pm</h1>
+<p class="b-text">With Priya. Wall 3. Cancel free until 1pm tomorrow.</p>
+<div class="b-button"><span class="btn primary full">Show check-in code</span>
+</div>
+<hr class="divider">
+<div class="b-heading"><h2>This week</h2></div>
+<div class="seg" style="--n: 5">
+  <div class="segcell">
+    <div class="bar done"></div>
+    <div class="seglabel"><b>Mon</b></div>
+<div class="segsub">Climbed</div>  </div>
+  <div class="segcell">
+    <div class="bar current"></div>
+    <div class="seglabel"><b>Tue</b></div>
+<div class="segsub strong">Today</div>  </div>
+  <div class="segcell">
+    <div class="bar progress"></div>
+    <div class="seglabel"><b>Wed</b></div>
+<div class="segsub">Booked</div>  </div>
+  <div class="segcell">
+    <div class="bar todo"></div>
+    <div class="seglabel"><b>Thu</b></div>
+  </div>
+  <div class="segcell">
+    <div class="bar progress"></div>
+    <div class="seglabel"><b>Fri</b></div>
+<div class="segsub">Booked</div>  </div>
+</div>
+
+<div class="b-heading"><h2>Coming up</h2><span class="link">All bookings</span></div>
+<div class="list"><div class="li"><div><div class="li-title">Intro to lead</div><div class="li-meta">Wed 7pm · Wall 3</div></div><div class="num li-value">Booked</div></div><div class="li"><div><div class="li-title">Open bouldering</div><div class="li-meta">Fri 6pm · 2 hours</div></div><div class="num li-value">Booked</div></div></div>
+</main>
+<nav class="tabs"><div class="ni on"><svg class="nicon" viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="3"/></svg><span>Home</span></div><div class="ni"><svg class="nicon" viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="3"/></svg><span>Timetable</span></div><div class="ni"><svg class="nicon" viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="3"/></svg><span>Bookings</span></div><div class="ni"><svg class="nicon" viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="3"/></svg><span>Membership</span></div><div class="ni"><svg class="nicon" viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="3"/></svg><span>Account</span></div></nav>  </div>
+</div>
+</figure>
+    <figure><div class="dev dev-tablet" style="width: 820px; height: 1180px">
+  <nav class="rail"><div class="brand">Bb</div><div class="ni on"><svg class="nicon" viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="3"/></svg><span>Home</span></div><div class="ni"><svg class="nicon" viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="3"/></svg><span>Timetable</span></div><div class="ni"><svg class="nicon" viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="3"/></svg><span>Bookings</span></div><div class="ni"><svg class="nicon" viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="3"/></svg><span>Membership</span></div><div class="ni"><svg class="nicon" viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="3"/></svg><span>Account</span></div></nav>
+  <div class="col">
+    <main class="body"><div class="b-header"><div><div class="b-eyebrow">Next session</div><h1 class="b-title">Intro to lead, tomorrow at 7pm</h1><p class="b-text">With Priya. Wall 3. Cancel free until 1pm tomorrow.</p></div>
+<div class="b-buttons"><span class="btn secondary">Cancel</span>
+<span class="btn primary">Show check-in code</span>
+</div></div>
+<hr class="divider">
+<div class="b-heading"><h2>This week</h2></div>
+<div class="seg" style="--n: 7">
+  <div class="segcell">
+    <div class="bar done"></div>
+    <div class="seglabel"><b>Mon</b></div>
+<div class="segsub">Climbed</div>  </div>
+  <div class="segcell">
+    <div class="bar current"></div>
+    <div class="seglabel"><b>Tue</b></div>
+<div class="segsub strong">Today</div>  </div>
+  <div class="segcell">
+    <div class="bar progress"></div>
+    <div class="seglabel"><b>Wed</b></div>
+<div class="segsub">Booked</div>  </div>
+  <div class="segcell">
+    <div class="bar todo"></div>
+    <div class="seglabel"><b>Thu</b></div>
+<div class="segsub">Free</div>  </div>
+  <div class="segcell">
+    <div class="bar progress"></div>
+    <div class="seglabel"><b>Fri</b></div>
+<div class="segsub">Booked</div>  </div>
+  <div class="segcell">
+    <div class="bar todo"></div>
+    <div class="seglabel"><b>Sat</b></div>
+<div class="segsub">Free</div>  </div>
+  <div class="segcell">
+    <div class="bar todo"></div>
+    <div class="seglabel"><b>Sun</b></div>
+<div class="segsub">Free</div>  </div>
+</div>
+
+<div class="b-heading"><h2>Your plan</h2></div>
+<div class="rows">  <div class="row"><span>Credits left</span><span class="num">6 of 10</span></div>
+  <div class="row"><span>Renews</span><span class="num">1 Nov</span></div>
+  <div class="row strong"><span>Guest passes</span><span class="num">1</span></div>
+</div>
+<div class="b-heading"><h2>Coming up</h2><span class="link">All bookings</span></div>
+<div class="list"><div class="li"><div><div class="li-title">Intro to lead</div><div class="li-meta">Wed 14 Oct, 7pm · Wall 3 · Priya</div></div><div class="num li-value">Booked</div></div><div class="li"><div><div class="li-title">Open bouldering</div><div class="li-meta">Fri 16 Oct, 6pm · 2 hours</div></div><div class="num li-value">Booked</div></div></div>
+</main>
+  </div>
+</div>
+</figure>
+  </div>
+</section>
+<section class="board" data-name="Timetable, laptop" data-slug="timetable-laptop">
+  <header class="bh">
+    <div class="eyebrow">Step 1 · Wireframes · <code>/timetable</code></div>
+    <h1>Timetable, laptop</h1>
+<p class="lede">The week at a glance, with spaces left on every class. Full classes stay visible and say so, rather than disappearing.</p>  </header>
+  <div class="frames wire" style="--ink: #1F1F1F; --muted: #6B6B6B; --primary: #1F1F1F; --primary-ink: #FFFFFF; --tint: #EFEFEF; --surface: #FFFFFF; --shelf: #FFFFFF; --rule: #DADADA; --danger: #1F1F1F; --warning: #1F1F1F; --warning-bg: #EFEFEF;  zoom: 0.7756">
+    <figure><div class="dev dev-desktop" style="width: 1440px; height: 900px">
+  <nav class="side"><div class="brand">Belaybook</div><div class="ni"><svg class="nicon" viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="3"/></svg><span>Home</span></div><div class="ni on"><svg class="nicon" viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="3"/></svg><span>Timetable</span></div><div class="ni"><svg class="nicon" viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="3"/></svg><span>Bookings</span></div><div class="ni"><svg class="nicon" viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="3"/></svg><span>Membership</span></div><div class="ni"><svg class="nicon" viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="3"/></svg><span>Account</span></div>    <div class="foot"><div class="b">Northwall Climbing</div><div class="">Standard plan</div><div class="">Jo Malik</div></div></nav>
+  <div class="col">
+    <main class="body"><div class="b-header"><div><h1 class="b-title small">Timetable</h1></div>
+<div class="b-buttons"><span class="btn primary">Book selected class</span>
+</div></div>
+<div class="filters"><label><span>Week</span><span class="input select">12 to 18 Oct</span></label><label><span>Class type</span><span class="input select">All</span></label><label><span>Level</span><span class="input select">All</span></label></div>
+<p class="b-text small">24 classes this week. You have 6 credits.</p>
+<table class="t"><thead><tr><th class="">Day</th><th class="">Time</th><th class="">Class</th><th class="">Level</th><th class="">Instructor</th><th class="r">Spaces</th></tr></thead><tbody>
+<tr class="grp"><td colspan="6">Wednesday 14 October</td></tr><tr class=""><td class="">Wed</td><td class="">6pm</td><td class="">Youth squad</td><td class="">Under 16</td><td class="">Sam</td><td class="r num">4 left</td></tr><tr class=""><td class="">Wed</td><td class="">7pm</td><td class="">Intro to lead</td><td class="">Beginner</td><td class="">Priya</td><td class="r num">Booked</td></tr><tr class="hl"><td class="">Wed</td><td class="">8pm</td><td class="">Technique clinic</td><td class="">Improver</td><td class="">Alex</td><td class="r num">Full</td></tr><tr class="grp"><td colspan="6">Thursday 15 October</td></tr><tr class=""><td class="">Thu</td><td class="">7am</td><td class="">Early bouldering</td><td class="">All</td><td class="">Drop-in</td><td class="r num">12 left</td></tr><tr class=""><td class="">Thu</td><td class="">7pm</td><td class="">Strength for climbers</td><td class="">All</td><td class="">Alex</td><td class="r num">2 left</td></tr></tbody></table>
+</main>
+  </div>
+<aside class="panel"><div class="b-eyebrow">Wed 14 Oct · 8pm · 90 min</div>
+<h1 class="b-title small">Technique clinic</h1>
+<div class="rows">  <div class="row"><span>Instructor</span><span class="num">Alex</span></div>
+  <div class="row"><span>Level</span><span class="num">Improver</span></div>
+  <div class="row"><span>Spaces</span><span class="num">0 of 8</span></div>
+  <div class="row"><span>Cost</span><span class="num">1 credit</span></div>
+</div>
+<p class="b-text muted small">Footwork and body position on the slab. Bring your own shoes if you have them.</p>
+<p class="b-text small">This class is full. The waiting list arrives in the next release.</p>
+<div class="b-buttons"><span class="btn secondary">Find a similar class</span>
+</div>
+</aside></div>
+</figure>
+  </div>
+</section>
+<section class="board" data-name="Book a class, phone" data-slug="book-a-class-phone">
+  <header class="bh">
+    <div class="eyebrow">Step 1 · Wireframes · <code>/timetable/:id/book</code></div>
+    <h1>Book a class, phone</h1>
+<p class="lede">Three steps, one decision each. The last step restates the time, the cost and the cancellation deadline before anything is booked.</p>  </header>
+  <div class="frames wire" style="--ink: #1F1F1F; --muted: #6B6B6B; --primary: #1F1F1F; --primary-ink: #FFFFFF; --tint: #EFEFEF; --surface: #FFFFFF; --shelf: #FFFFFF; --rule: #DADADA; --danger: #1F1F1F; --warning: #1F1F1F; --warning-bg: #EFEFEF;  zoom: 0.827">
+    <figure><div class="dev dev-phone" style="width: 390px; height: 844px">
+  <div class="col">
+<div class="appbar"><span></span><b>Book a class</b><span class="r">Exit ✕</span></div>    <main class="body"><div class="stepper" style="--n: 3"><div class="st on"></div><div class="st"></div><div class="st"></div></div>
+<div class="b-text muted small">Step 1 of 3</div><h1 class="b-title small">Intro to lead</h1>
+<p class="b-text">Wednesday 14 October, 7pm to 8:30pm. Wall 3, with Priya.</p>
+<div class="rows">  <div class="row"><span>Level</span><span class="num">Beginner</span></div>
+  <div class="row"><span>Spaces left</span><span class="num">3 of 8</span></div>
+  <div class="row"><span>Cost</span><span class="num">1 credit</span></div>
+</div>
+<div class="callout"><p>You need to have passed the top-rope check. You did on 2 Sep.</p></div>
+</main>
+<div class="footer"><div class="b-button"><span class="btn primary full">Book this class</span>
+</div>
+</div>  </div>
+</div>
+</figure>
+    <figure><div class="dev dev-phone" style="width: 390px; height: 844px">
+  <div class="col">
+<div class="appbar"><span>‹ Back</span><b>Book a class</b><span class="r">Exit</span></div>    <main class="body"><div class="stepper" style="--n: 3"><div class="st on"></div><div class="st on"></div><div class="st"></div></div>
+<div class="b-text muted small">Step 2 of 3</div><h1 class="b-title small">Do you need to hire kit?</h1>
+<div class="choices"><div class="choice on"><span class="radio"></span><div><b>No, I have my own</b><div>Shoes and harness</div></div></div><div class="choice"><span class="radio"></span><div><b>Hire a harness</b><div>Free with classes</div></div></div><div class="choice"><span class="radio"></span><div><b>Hire shoes and harness</b><div>£4, paid at the desk</div></div></div></div>
+</main>
+<div class="footer"><div class="b-button"><span class="btn primary full">Continue</span>
+</div>
+</div>  </div>
+</div>
+</figure>
+    <figure><div class="dev dev-phone" style="width: 390px; height: 844px">
+  <div class="col">
+<div class="appbar"><span>‹ Back</span><b>Book a class</b><span class="r">Exit</span></div>    <main class="body"><div class="stepper" style="--n: 3"><div class="st on"></div><div class="st on"></div><div class="st on"></div></div>
+<div class="b-text muted small">Step 3 of 3</div><h1 class="b-title small">Confirm your booking</h1>
+<div class="rows">  <div class="row"><span>Class</span><span class="num">Intro to lead</span></div>
+  <div class="row"><span>When</span><span class="num">Wed 14 Oct, 7pm</span></div>
+  <div class="row"><span>Kit</span><span class="num">Your own</span></div>
+  <div class="row"><span>Cost</span><span class="num">1 credit, 5 left after</span></div>
+</div>
+<p class="b-text muted small">Cancel free until 1pm on the day. After that the credit is used.</p>
+</main>
+<div class="footer"><div class="b-button"><span class="btn primary full">Book for 1 credit</span>
+</div>
+</div>  </div>
+</div>
+</figure>
+  </div>
+</section>
+
+<section class="board vis" data-name="Visual system" data-slug="visual-system" style="--ink: #1C1917; --muted: #57534E; --primary: #9A3412; --primary-ink: #FFFFFF; --tint: #FBE9E2; --surface: #FFFFFF; --shelf: #FAF7F2; --rule: #E2DCD5; --danger: #B42318; --warning: #8A4B00; --warning-bg: #EFEFEF; ">
+  <header class="bh">
+    <div class="eyebrow">Belaybook · Step 2 of 3 · Visual system</div>
+    <div class="bh-row">
+      <div><h1 class="serif">Belaybook visual system</h1><p class="lede">Chalk white, warm greys, one rust colour for actions, and the week drawn as a strip.</p></div>
+<p class="legend small">Every text colour passes WCAG AA on white (checked by the generator). Full, booked and spaces left are always words, never colour alone.</p>    </div>
+  </header>
+  <div class="vis-grid">
+    <div>
+      <h2 class="serif">Colour</h2>
+      <table class="ctable"><thead><tr><th></th><th>Token</th><th>Used for</th><th class="r">On white</th></tr></thead><tbody>
+<tr><td><span class="sw" style="background: #1C1917"></span></td>
+        <td><b>Stone</b> #1C1917</td><td>Text, totals rule, days climbed</td><td class="r">17.5 : 1</td></tr><tr><td><span class="sw" style="background: #57534E"></span></td>
+        <td><b>Pebble</b> #57534E</td><td>Secondary text, captions</td><td class="r">7.6 : 1</td></tr><tr><td><span class="sw" style="background: #9A3412"></span></td>
+        <td><b>Rust</b> #9A3412</td><td>Primary actions, links, today</td><td class="r">7.3 : 1</td></tr><tr><td><span class="sw" style="background: #FBE9E2"></span></td>
+        <td><b>Rust tint</b> #FBE9E2</td><td>Selected row, current nav item</td><td class="r">fill only</td></tr><tr><td><span class="sw" style="background: #FAF7F2"></span></td>
+        <td><b>Chalk</b> #FAF7F2</td><td>Navigation, sheets behind content</td><td class="r">fill only</td></tr><tr><td><span class="sw" style="background: #E2DCD5"></span></td>
+        <td><b>Rule</b> #E2DCD5</td><td>Row dividers; input borders use Pebble</td><td class="r">line only</td></tr><tr><td><span class="sw" style="background: #8A4B00"></span></td>
+        <td><b>Amber</b> #8A4B00</td><td>Full, few spaces left</td><td class="r">6.8 : 1</td></tr><tr><td><span class="sw" style="background: #B42318"></span></td>
+        <td><b>Red</b> #B42318</td><td>Errors and cancellations only</td><td class="r">6.6 : 1</td></tr>      </tbody></table>
+<p class="small muted rule-note">Availability is never green and red. &#34;Full&#34; is a word and an amber tag; spaces left is a number.</p>      <h2 class="serif">Type</h2>
+      <div class="tscale">        <div class="tr"><div class="small muted">Page title<br>Serif, 32/38, 600</div>
+        <div style="font-family: var(--serif); font-size: 32px; line-height: 38px; font-weight: 600;">Intro to lead, tomorrow at 7pm</div></div>
+        <div class="tr"><div class="small muted">Section<br>Serif, 22/28, 600</div>
+        <div style="font-family: var(--serif); font-size: 22px; line-height: 28px; font-weight: 600;">This week</div></div>
+        <div class="tr"><div class="small muted">Key figure<br>Sans, 34/40, 600</div>
+        <div style="font-family: var(--sans); font-size: 34px; line-height: 40px; font-weight: 600; font-variant-numeric: tabular-nums;">NW 4821</div></div>
+        <div class="tr"><div class="small muted">Label<br>Sans, 16/24, 600</div>
+        <div style="font-family: var(--sans); font-size: 16px; line-height: 24px; font-weight: 600;">Cancel free until</div></div>
+        <div class="tr"><div class="small muted">Body and tables<br>Sans, 16/24, 400</div>
+        <div style="font-family: var(--sans); font-size: 16px; line-height: 24px; font-weight: 400;">Bring your own shoes if you have them.</div></div>
+        <div class="tr"><div class="small muted">Caption<br>Sans, 14/20, 400</div>
+        <div style="font-family: var(--sans); font-size: 14px; line-height: 20px; font-weight: 400; color: var(--muted);">7pm · Wall 3 · Priya</div></div>
+</div>
+    </div>
+    <div>
+      <h2 class="serif">The week strip</h2>
+<p class="small muted">The one signature element. Seven days, read left to right. It appears on Home and above the timetable, full width on laptop and as five days on phone.</p>      <div class="sig"><div class="seg has-marker" style="--n: 7">
+<div class="marker" style="left: 21%"><span>Today, Tue 13 Oct</span></div>  <div class="segcell">
+    <div class="bar done"></div>
+    <div class="seglabel"><b>Mon</b></div>
+<div class="segsub">Climbed</div>  </div>
+  <div class="segcell">
+    <div class="bar current"></div>
+    <div class="seglabel"><b>Tue</b></div>
+<div class="segsub strong">Today</div>  </div>
+  <div class="segcell">
+    <div class="bar progress"></div>
+    <div class="seglabel"><b>Wed</b></div>
+<div class="segsub">Booked</div>  </div>
+  <div class="segcell">
+    <div class="bar todo"></div>
+    <div class="seglabel"><b>Thu</b></div>
+<div class="segsub">Free</div>  </div>
+  <div class="segcell">
+    <div class="bar progress"></div>
+    <div class="seglabel"><b>Fri</b></div>
+<div class="segsub">Booked</div>  </div>
+  <div class="segcell">
+    <div class="bar todo"></div>
+    <div class="seglabel"><b>Sat</b></div>
+<div class="segsub">Free</div>  </div>
+  <div class="segcell">
+    <div class="bar todo"></div>
+    <div class="seglabel"><b>Sun</b></div>
+<div class="segsub">Free</div>  </div>
+</div>
+</div>
+      <h2 class="serif">Components</h2>
+      <div class="comps"><div class="b-buttons"><span class="btn primary">Book for 1 credit</span>
+<span class="btn secondary">Filters</span>
+<span class="btn ghost">Back</span>
+<span class="btn danger">Cancel booking</span>
+<span class="btn disabled">Full</span>
+</div>
+<div class="b-buttons"><span class="btn focused">Focused</span>
+</div>
+<div class="fields"><div class="field"><b>Emergency contact</b><div class="hint">Name and phone number</div><span class="input">Sam Malik 07•••</span></div>
+<div class="field error"><b>Date of birth</b><div class="err">Enter a full date, like 4 March 1990</div><span class="input">4/3</span></div>
+</div>
+<div class="status"><span class="st-check"><i></i>Climbed</span><span class="st-dot"><i></i>Today</span><span class="st-half"><i></i>Booked</span><span class="st-dashed"><i></i>Free</span><span class="st-warn"><i></i>2 spaces left</span></div>
+<table class="t"><thead><tr><th class="">Day</th><th class="">Class</th><th class="">Time</th><th class="r">Spaces</th></tr></thead><tbody>
+<tr class="hl"><td class="">Wed</td><td class="">Intro to lead</td><td class="">7pm</td><td class="r num">Booked</td></tr><tr class=""><td class="">Wed</td><td class="">Technique clinic</td><td class="">8pm</td><td class="r num">Full</td></tr></tbody></table>
+</div>
+      <dl class="tokens"><dt>Spacing</dt><dd>4, 8, 12, 16, 24, 32, 48 px</dd><dt>Corners</dt><dd>6 px controls, 12 px sheets; one step softer than an office tool</dd><dt>Elevation</dt><dd>None on the page. One shadow, only for sheets and dialogs</dd><dt>Targets</dt><dd>48 px minimum on phone; people book with chalky hands</dd></dl>
+    </div>
+  </div>
+</section>
+
+<section class="board" data-name="Home, laptop" data-slug="home-laptop">
+  <header class="bh">
+    <div class="eyebrow">Step 3 · Screens in the visual system · <code>/</code></div>
+    <h1>Home, laptop</h1>
+<p class="lede">The same structure as the wireframe, now in chalk white and rust, with the week strip as the signature element.</p>  </header>
+  <div class="frames styled" style="--ink: #1C1917; --muted: #57534E; --primary: #9A3412; --primary-ink: #FFFFFF; --tint: #FBE9E2; --surface: #FFFFFF; --shelf: #FAF7F2; --rule: #E2DCD5; --danger: #B42318; --warning: #8A4B00; --warning-bg: #EFEFEF;  zoom: 0.7756">
+    <figure><div class="dev dev-desktop" style="width: 1440px; height: 900px">
+  <nav class="side"><div class="brand">Belaybook</div><div class="ni on"><svg class="nicon" viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="3"/></svg><span>Home</span></div><div class="ni"><svg class="nicon" viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="3"/></svg><span>Timetable</span></div><div class="ni"><svg class="nicon" viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="3"/></svg><span>Bookings</span></div><div class="ni"><svg class="nicon" viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="3"/></svg><span>Membership</span></div><div class="ni"><svg class="nicon" viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="3"/></svg><span>Account</span></div>    <div class="foot"><div class="b">Northwall Climbing</div><div class="">Standard plan</div><div class="">Jo Malik</div></div></nav>
+  <div class="col">
+    <main class="body"><div class="b-header"><div><div class="b-eyebrow">Next session</div><h1 class="b-title">Intro to lead, tomorrow at 7pm</h1><p class="b-text">With Priya on Wall 3. Cancel free until 1pm tomorrow.</p></div>
+<div class="b-buttons"><span class="btn secondary">Cancel</span>
+<span class="btn primary">Show check-in code</span>
+</div></div>
+<div class="seg" style="--n: 7">
+  <div class="segcell">
+    <div class="bar done"></div>
+    <div class="seglabel"><b>Mon</b></div>
+<div class="segsub">Climbed</div>  </div>
+  <div class="segcell">
+    <div class="bar current"></div>
+    <div class="seglabel"><b>Tue</b></div>
+<div class="segsub strong">Today</div>  </div>
+  <div class="segcell">
+    <div class="bar progress"></div>
+    <div class="seglabel"><b>Wed</b></div>
+<div class="segsub">Booked</div>  </div>
+  <div class="segcell">
+    <div class="bar todo"></div>
+    <div class="seglabel"><b>Thu</b></div>
+<div class="segsub">Free</div>  </div>
+  <div class="segcell">
+    <div class="bar progress"></div>
+    <div class="seglabel"><b>Fri</b></div>
+<div class="segsub">Booked</div>  </div>
+  <div class="segcell">
+    <div class="bar todo"></div>
+    <div class="seglabel"><b>Sat</b></div>
+<div class="segsub">Free</div>  </div>
+  <div class="segcell">
+    <div class="bar todo"></div>
+    <div class="seglabel"><b>Sun</b></div>
+<div class="segsub">Free</div>  </div>
+</div>
+
+<div class="b-cols" style="--n: 2"><div><div class="b-heading"><h2>Your plan</h2></div>
+<div class="rows">  <div class="row"><span>Credits left</span><span class="num">6 of 10</span></div>
+  <div class="row"><span>Renews</span><span class="num">1 Nov</span></div>
+  <div class="row strong"><span>Guest passes</span><span class="num">1</span></div>
+</div>
+<p class="b-text muted small">Unused credits do not roll over. 6 will expire on 1 Nov.</p>
+</div><div><div class="b-heading"><h2>Coming up</h2><span class="link">All bookings</span></div>
+<table class="t"><thead><tr><th class="">Day</th><th class="">Class</th><th class="">Time</th><th class="r"></th></tr></thead><tbody>
+<tr class=""><td class="">Wed 14</td><td class="">Intro to lead</td><td class="">7pm</td><td class="r num">Booked</td></tr><tr class=""><td class="">Fri 16</td><td class="">Open bouldering</td><td class="">6pm</td><td class="r num">Booked</td></tr><tr class=""><td class="">Sun 18</td><td class="">Kids&#39; club (guest)</td><td class="">10am</td><td class="r num">Booked</td></tr></tbody></table>
+</div></div>
+</main>
+  </div>
+<aside class="panel"><div class="b-heading"><h2>Today at Northwall</h2></div>
+<div class="rows">  <div class="row"><span>Open</span><span class="num">7am to 10pm</span></div>
+  <div class="row"><span>Busy now</span><span class="num">Quiet</span></div>
+  <div class="row"><span>Wall 2</span><span class="num">Reset today</span></div>
+</div>
+<div class="b-buttons"><span class="btn secondary">See today&#39;s classes</span>
+</div>
+</aside></div>
+</figure>
+  </div>
+</section>
+<section class="board" data-name="Timetable and booked, phone" data-slug="timetable-and-booked-phone">
+  <header class="bh">
+    <div class="eyebrow">Step 3 · Screens in the visual system · <code>/timetable · /bookings/:id</code></div>
+    <h1>Timetable and booked, phone</h1>
+<p class="lede">Spaces are a word and a number, never a colour alone. A booking ends on a code the member can show at the desk.</p>  </header>
+  <div class="frames styled" style="--ink: #1C1917; --muted: #57534E; --primary: #9A3412; --primary-ink: #FFFFFF; --tint: #FBE9E2; --surface: #FFFFFF; --shelf: #FAF7F2; --rule: #E2DCD5; --danger: #B42318; --warning: #8A4B00; --warning-bg: #EFEFEF;  zoom: 0.827">
+    <figure><div class="dev dev-phone" style="width: 390px; height: 844px">
+  <div class="col">
+    <main class="body"><div class="b-header"><div><h1 class="b-title small">Timetable</h1></div>
+<div class="b-buttons"><span class="btn secondary">Filters</span>
+</div></div>
+<div class="chips"><span class="chip on">Beginner ×</span></div>
+<div class="stepper" style="--n: 5"><div class="st on"><span>Tue</span></div><div class="st on"><span>Wed</span></div><div class="st"><span>Thu</span></div><div class="st"><span>Fri</span></div><div class="st"><span>Sat</span></div></div>
+<div class="list"><div class="group">Wednesday 14 October</div>
+<div class="li"><div><div class="li-title">Youth squad</div><div class="li-meta">6pm · Under 16 · Sam</div></div><div class="num li-value">4 left</div></div><div class="li"><div><div class="li-title">Intro to lead</div><div class="li-meta">7pm · Beginner · Priya</div></div><div class="num li-value">Booked</div></div><div class="li"><div><div class="li-title">Technique clinic</div><div class="li-meta">8pm · Improver · Alex</div></div><div class="num li-value warn">Full</div></div><div class="group">Thursday 15 October</div>
+<div class="li"><div><div class="li-title">Early bouldering</div><div class="li-meta">7am · All levels</div></div><div class="num li-value">12 left</div></div></div>
+</main>
+<nav class="tabs"><div class="ni"><svg class="nicon" viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="3"/></svg><span>Home</span></div><div class="ni on"><svg class="nicon" viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="3"/></svg><span>Timetable</span></div><div class="ni"><svg class="nicon" viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="3"/></svg><span>Bookings</span></div><div class="ni"><svg class="nicon" viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="3"/></svg><span>Membership</span></div><div class="ni"><svg class="nicon" viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="3"/></svg><span>Account</span></div></nav>  </div>
+</div>
+</figure>
+    <figure><div class="dev dev-phone" style="width: 390px; height: 844px">
+  <div class="col">
+<div class="appbar"><span></span><b>Booked</b><span class="r"></span></div>    <main class="body"><div class="success"><span class="tick">✓</span></div>
+<h1 class="b-title small">You&#39;re booked on Intro to lead</h1>
+<p class="b-text">Wednesday 14 October at 7pm, Wall 3, with Priya.</p>
+<p class="b-text muted small">Check-in code</p>
+<div class="code">NW 4821</div>
+<div class="rows">  <div class="row"><span>Cost</span><span class="num">1 credit</span></div>
+  <div class="row"><span>Credits left</span><span class="num">5</span></div>
+  <div class="row"><span>Cancel free until</span><span class="num">1pm, Wed 14 Oct</span></div>
+</div>
+</main>
+<div class="footer"><div class="b-button"><span class="btn primary full">Add to calendar</span>
+</div>
+<div class="b-button"><span class="btn ghost full">Back to home</span>
+</div>
+</div>  </div>
+</div>
+</figure>
+  </div>
+</section>
+
+</body>
+</html>

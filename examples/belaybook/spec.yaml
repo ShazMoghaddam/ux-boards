@@ -1,0 +1,456 @@
+# Worked example: Belaybook, a fictional class and session booking app for
+# members of a climbing gym. Every name, number and person below is invented.
+# Where Bindery is staff-facing, this one is customer-facing, so it shows how
+# the same boards work when the user is a member on their phone.
+# Build it with:
+#   python generator/generate.py build examples/belaybook/spec.yaml -o examples/belaybook/out --pdf --png
+
+project:
+  name: Belaybook
+  short: Bb
+  tagline: Class and session booking for climbing gym members
+
+release_labels:
+  1: First release
+  2: Next release
+
+# ------------------------------------------------------------------ Step 1: structure
+ia:
+  intro: >-
+    Five sections, ordered by how often a member opens them in a week. These boards fix
+    structure and behaviour only. Visual style comes in step 2.
+  sections:
+    - route: /
+      name: Home
+      question: When am I next climbing, and is anything about to change?
+      pages:
+        - name: Home
+          note: Next session, this week, check-in code
+        - name: First-run setup
+          note: Same address. Membership, waiver and a first booking
+    - route: /timetable
+      name: Timetable
+      question: What can I book, and when is there space?
+      pages:
+        - name: Timetable
+          note: Filter by day, class type, level. Spaces left on every class
+        - name: Class
+          route: /timetable/:id
+          note: Instructor, level, spaces, what to bring
+        - name: Book
+          route: /timetable/:id/book
+        - name: Waiting list
+          route: /timetable/:id/wait
+          release: 2
+          note: Join, see your place, get a text when a space opens
+    - route: /bookings
+      name: Bookings
+      question: What have I booked, and can I change it?
+      pages:
+        - name: Upcoming
+          note: Grouped by day, cancel or move
+        - name: Booking
+          route: /bookings/:id
+          note: Check-in code, cancellation deadline
+        - name: History
+          release: 2
+          note: Every visit, with a running total
+    - route: /membership
+      name: Membership
+      question: What does my plan include, and what is left?
+      pages:
+        - name: My plan
+          note: Credits left, renewal date
+        - name: Change plan
+          route: /membership/change
+        - name: Guest passes
+          route: /membership/guests
+          release: 2
+    - route: /account
+      name: Account
+      question: Who you are to the gym.
+      pages:
+        - name: Details and waiver
+          route: /account/details
+          note: Name, emergency contact, waiver status
+        - name: Notifications
+          release: 2
+          note: Reminders, waiting list texts
+
+  journeys:
+    - name: Book a class
+      paths:
+        - [Home headline, Timetable, Class, Check credits, Confirm, Booked with code]
+    - name: Class is full
+      paths:
+        - [Class, "Full, try another time"]
+        - [{label: Join waiting list, release: 2}, {label: Space opens, release: 2}, {label: Confirm by text, release: 2}]
+    - name: First run
+      paths:
+        - [Create account, Choose a plan, Sign the waiver, First booking]
+
+  notes:
+    - title: Cross-links
+      body: A booking opens its class. A class shows your other bookings that day. The Home headline goes straight to the next booking and its check-in code.
+    - title: Outside the sections
+      body: Sign in. Public timetable for people who are not members yet. Not found. Payment errors that say what to try next.
+    - title: The API needs two additions
+      body: 1. Spaces left per class in the timetable list, not only on the class. 2. A booking endpoint that returns the check-in code.
+
+# ------------------------------------------------------------------ breakpoints
+breakpoints:
+  intro: >-
+    Members book on their phones, often in the changing room, so the phone gets the most care.
+    The front desk runs a tablet; staff schedule classes on a laptop.
+  devices:
+    - kind: phone
+      name: Phone
+      range: under 768
+      description: Bottom tab bar, five labelled tabs. The next booking and its code are never more than one tap away.
+    - kind: tablet
+      name: Tablet
+      range: 768 to 1199
+      description: An 88 px rail. At the front desk it shows today's classes with names, in landscape.
+    - kind: desktop
+      name: Laptop 1200 to 1599 · Desktop 1600 and up
+      description: A 248 px sidebar. Class detail opens in a right panel beside the week's timetable.
+  columns: [Phone, Tablet, Laptop and desktop]
+  patterns:
+    - pattern: Page actions
+      cells:
+        - One primary action in the header; the rest in a More menu
+        - Primary and one secondary action in the header
+        - All actions in the header, primary rightmost
+    - pattern: Timetable
+      cells:
+        - One day at a time, swipe or tap a day; spaces left on the right
+        - Two days side by side
+        - The whole week as columns; full classes stay visible and say so
+    - pattern: Filters
+      cells:
+        - Filters button opens a bottom sheet; active filters show as removable chips
+        - Filters button opens a popover; chips below the search
+        - Inline filter bar; every choice visible
+    - pattern: Detail
+      cells:
+        - Full screen with a back button
+        - Side sheet over the timetable
+        - Right panel beside the timetable
+    - pattern: Booking
+      cells:
+        - Full-screen task; tabs hidden; Exit at top left
+        - text: A centred 560 px column with a step indicator; navigation hidden behind an Exit link
+          span: 2
+
+shell:
+  nav_foot: [Northwall Climbing, Standard plan, Jo Malik]
+
+# ------------------------------------------------------------------ screens
+screens:
+  - title: Home, phone and tablet
+    route: /
+    purpose: The next session first, with its check-in code, then the week. Nothing to configure before booking again.
+    frames:
+      - device: phone
+        nav: Home
+        appbar: {left: Belaybook, right: "6 credits"}
+        blocks:
+          - eyebrow: Next session
+          - title: Intro to lead, tomorrow at 7pm
+          - text: With Priya. Wall 3. Cancel free until 1pm tomorrow.
+          - button: Show check-in code
+            full: true
+          - divider: true
+          - heading: This week
+          - segments:
+              - {label: Mon, sub: Climbed, state: done}
+              - {label: Tue, sub: Today, state: current}
+              - {label: Wed, sub: Booked, state: progress}
+              - {label: Thu, state: todo}
+              - {label: Fri, sub: Booked, state: progress}
+          - heading: Coming up
+            link: All bookings
+          - list:
+              - {title: Intro to lead, meta: "Wed 7pm · Wall 3", value: Booked}
+              - {title: Open bouldering, meta: "Fri 6pm · 2 hours", value: Booked}
+      - device: tablet
+        nav: Home
+        blocks:
+          - header: Intro to lead, tomorrow at 7pm
+            eyebrow: Next session
+            text: With Priya. Wall 3. Cancel free until 1pm tomorrow.
+            actions: [Cancel, {value: Show check-in code, kind: primary}]
+          - divider: true
+          - heading: This week
+          - segments:
+              - {label: Mon, sub: Climbed, state: done}
+              - {label: Tue, sub: Today, state: current}
+              - {label: Wed, sub: Booked, state: progress}
+              - {label: Thu, sub: Free, state: todo}
+              - {label: Fri, sub: Booked, state: progress}
+              - {label: Sat, sub: Free, state: todo}
+              - {label: Sun, sub: Free, state: todo}
+          - heading: Your plan
+          - rows:
+              - [Credits left, "6 of 10"]
+              - [Renews, "1 Nov"]
+              - {label: Guest passes, value: "1", strong: true}
+          - heading: Coming up
+            link: All bookings
+          - list:
+              - {title: Intro to lead, meta: "Wed 14 Oct, 7pm · Wall 3 · Priya", value: Booked}
+              - {title: Open bouldering, meta: "Fri 16 Oct, 6pm · 2 hours", value: Booked}
+
+  - title: Timetable, laptop
+    route: /timetable
+    purpose: The week at a glance, with spaces left on every class. Full classes stay visible and say so, rather than disappearing.
+    frames:
+      - device: desktop
+        nav: Timetable
+        blocks:
+          - header: Timetable
+            small: true
+            actions: [{value: Book selected class, kind: primary}]
+          - filters:
+              - {label: Week, value: 12 to 18 Oct, select: true}
+              - {label: Class type, value: All, select: true}
+              - {label: Level, value: All, select: true}
+          - text: 24 classes this week. You have 6 credits.
+            small: true
+          - table:
+              columns: [Day, Time, Class, Level, Instructor, Spaces]
+              rows:
+                - {group: Wednesday 14 October}
+                - [Wed, 6pm, Youth squad, Under 16, Sam, "4 left"]
+                - [Wed, 7pm, Intro to lead, Beginner, Priya, "Booked"]
+                - [Wed, 8pm, Technique clinic, Improver, Alex, Full]
+                - {group: Thursday 15 October}
+                - [Thu, 7am, Early bouldering, All, Drop-in, "12 left"]
+                - [Thu, 7pm, Strength for climbers, All, Alex, "2 left"]
+            align: lllllr
+            highlight: 3
+        panel:
+          - eyebrow: Wed 14 Oct · 8pm · 90 min
+          - title: Technique clinic
+            small: true
+          - rows:
+              - [Instructor, Alex]
+              - [Level, Improver]
+              - [Spaces, "0 of 8"]
+              - [Cost, 1 credit]
+          - text: Footwork and body position on the slab. Bring your own shoes if you have them.
+            muted: true
+            small: true
+          - text: This class is full. The waiting list arrives in the next release.
+            small: true
+          - buttons: [Find a similar class]
+
+  - title: Book a class, phone
+    route: /timetable/:id/book
+    purpose: Three steps, one decision each. The last step restates the time, the cost and the cancellation deadline before anything is booked.
+    frames:
+      - device: phone
+        appbar: {title: Book a class, right: "Exit ✕"}
+        blocks:
+          - stepper: {step: 1, total: 3}
+          - title: Intro to lead
+            small: true
+          - text: Wednesday 14 October, 7pm to 8:30pm. Wall 3, with Priya.
+          - rows:
+              - [Level, Beginner]
+              - [Spaces left, "3 of 8"]
+              - [Cost, 1 credit]
+          - callout: You need to have passed the top-rope check. You did on 2 Sep.
+        footer:
+          - button: Book this class
+            full: true
+      - device: phone
+        appbar: {left: "‹ Back", title: Book a class, right: Exit}
+        blocks:
+          - stepper: {step: 2, total: 3}
+          - title: Do you need to hire kit?
+            small: true
+          - choices:
+              - {label: "No, I have my own", desc: Shoes and harness, selected: true}
+              - {label: Hire a harness, desc: Free with classes}
+              - {label: Hire shoes and harness, desc: "£4, paid at the desk"}
+        footer:
+          - button: Continue
+            full: true
+      - device: phone
+        appbar: {left: "‹ Back", title: Book a class, right: Exit}
+        blocks:
+          - stepper: {step: 3, total: 3}
+          - title: Confirm your booking
+            small: true
+          - rows:
+              - [Class, Intro to lead]
+              - [When, "Wed 14 Oct, 7pm"]
+              - [Kit, Your own]
+              - [Cost, "1 credit, 5 left after"]
+          - text: Cancel free until 1pm on the day. After that the credit is used.
+            muted: true
+            small: true
+        footer:
+          - button: Book for 1 credit
+            full: true
+
+  - title: Home, laptop
+    route: /
+    style: styled
+    eyebrow: Step 3 · Screens in the visual system
+    purpose: The same structure as the wireframe, now in chalk white and rust, with the week strip as the signature element.
+    frames:
+      - device: desktop
+        nav: Home
+        blocks:
+          - header: Intro to lead, tomorrow at 7pm
+            eyebrow: Next session
+            text: With Priya on Wall 3. Cancel free until 1pm tomorrow.
+            actions: [Cancel, {value: Show check-in code, kind: primary}]
+          - segments:
+              - {label: Mon, sub: Climbed, state: done}
+              - {label: Tue, sub: Today, state: current}
+              - {label: Wed, sub: Booked, state: progress}
+              - {label: Thu, sub: Free, state: todo}
+              - {label: Fri, sub: Booked, state: progress}
+              - {label: Sat, sub: Free, state: todo}
+              - {label: Sun, sub: Free, state: todo}
+          - columns:
+              - - heading: Your plan
+                - rows:
+                    - [Credits left, "6 of 10"]
+                    - [Renews, "1 Nov"]
+                    - {label: Guest passes, value: "1", strong: true}
+                - text: Unused credits do not roll over. 6 will expire on 1 Nov.
+                  muted: true
+                  small: true
+              - - heading: Coming up
+                  link: All bookings
+                - table:
+                    columns: [Day, Class, Time, ""]
+                    rows:
+                      - [Wed 14, Intro to lead, 7pm, Booked]
+                      - [Fri 16, Open bouldering, 6pm, Booked]
+                      - [Sun 18, Kids' club (guest), 10am, Booked]
+                  align: lllr
+        panel:
+          - heading: Today at Northwall
+          - rows:
+              - [Open, 7am to 10pm]
+              - [Busy now, Quiet]
+              - [Wall 2, Reset today]
+          - buttons: [See today's classes]
+
+  - title: Timetable and booked, phone
+    route: /timetable · /bookings/:id
+    style: styled
+    eyebrow: Step 3 · Screens in the visual system
+    purpose: Spaces are a word and a number, never a colour alone. A booking ends on a code the member can show at the desk.
+    frames:
+      - device: phone
+        nav: Timetable
+        blocks:
+          - header: Timetable
+            small: true
+            actions: [Filters]
+          - chips: [{label: Beginner, removable: true}]
+          - stepper: {step: 2, total: 5, labels: [Tue, Wed, Thu, Fri, Sat]}
+          - list:
+              - group: Wednesday 14 October
+              - {title: Youth squad, meta: "6pm · Under 16 · Sam", value: 4 left}
+              - {title: Intro to lead, meta: "7pm · Beginner · Priya", value: Booked}
+              - {title: Technique clinic, meta: "8pm · Improver · Alex", value: Full, warn: true}
+              - group: Thursday 15 October
+              - {title: Early bouldering, meta: "7am · All levels", value: 12 left}
+      - device: phone
+        appbar: {title: Booked}
+        blocks:
+          - success: true
+          - title: You're booked on Intro to lead
+            small: true
+          - text: Wednesday 14 October at 7pm, Wall 3, with Priya.
+          - text: Check-in code
+            muted: true
+            small: true
+          - code: NW 4821
+          - rows:
+              - [Cost, 1 credit]
+              - [Credits left, "5"]
+              - [Cancel free until, "1pm, Wed 14 Oct"]
+        footer:
+          - button: Add to calendar
+            full: true
+          - button: Back to home
+            kind: ghost
+            full: true
+
+# ------------------------------------------------------------------ Step 2: visual system
+visual:
+  intro: Chalk white, warm greys, one rust colour for actions, and the week drawn as a strip.
+  accessibility_note: >-
+    Every text colour passes WCAG AA on white (checked by the generator). Full, booked and
+    spaces left are always words, never colour alone.
+  colours:
+    - {name: Stone, hex: "#1C1917", use: "Text, totals rule, days climbed", token: ink}
+    - {name: Pebble, hex: "#57534E", use: "Secondary text, captions", token: muted}
+    - {name: Rust, hex: "#9A3412", use: "Primary actions, links, today", token: primary}
+    - {name: Rust tint, hex: "#FBE9E2", use: "Selected row, current nav item", role: fill, token: tint}
+    - {name: Chalk, hex: "#FAF7F2", use: "Navigation, sheets behind content", role: fill, token: shelf}
+    - {name: Rule, hex: "#E2DCD5", use: "Row dividers; input borders use Pebble", role: line, token: rule}
+    - {name: Amber, hex: "#8A4B00", on: "#FBEFD9", use: "Full, few spaces left", token: warning}
+    - {name: Red, hex: "#B42318", use: "Errors and cancellations only", token: danger}
+  rules:
+    - Availability is never green and red. "Full" is a word and an amber tag; spaces left is a number.
+  type:
+    import_url: "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Inter:wght@400;600;700&display=swap"
+    serif: {family: "Fraunces, Georgia, serif"}
+    sans: {family: "Inter, 'Helvetica Neue', Arial, sans-serif"}
+    scale:
+      - {role: Page title, font: serif, size: 32, line: 38, weight: 600, sample: "Intro to lead, tomorrow at 7pm"}
+      - {role: Section, font: serif, size: 22, line: 28, weight: 600, sample: This week}
+      - {role: Key figure, font: sans, size: 34, line: 40, weight: 600, tabular: true, sample: NW 4821}
+      - {role: Label, font: sans, size: 16, line: 24, weight: 600, sample: Cancel free until}
+      - {role: Body and tables, font: sans, size: 16, line: 24, weight: 400, sample: Bring your own shoes if you have them.}
+      - {role: Caption, font: sans, size: 14, line: 20, weight: 400, muted: true, sample: "7pm · Wall 3 · Priya"}
+  signature:
+    name: The week strip
+    description: The one signature element. Seven days, read left to right. It appears on Home and above the timetable, full width on laptop and as five days on phone.
+    marker: {at: 21, label: "Today, Tue 13 Oct"}
+    segments:
+      - {label: Mon, sub: Climbed, state: done}
+      - {label: Tue, sub: Today, state: current}
+      - {label: Wed, sub: Booked, state: progress}
+      - {label: Thu, sub: Free, state: todo}
+      - {label: Fri, sub: Booked, state: progress}
+      - {label: Sat, sub: Free, state: todo}
+      - {label: Sun, sub: Free, state: todo}
+  components:
+    - buttons:
+        - {value: Book for 1 credit, kind: primary}
+        - {value: Filters, kind: secondary}
+        - {value: Back, kind: ghost}
+        - {value: Cancel booking, kind: danger}
+        - {value: Full, kind: disabled}
+    - buttons: [{value: Focused, kind: focused}]
+    - fields:
+        - {label: Emergency contact, hint: Name and phone number, value: Sam Malik 07•••}
+        - {label: Date of birth, error: "Enter a full date, like 4 March 1990", value: "4/3"}
+    - status:
+        - {label: Climbed, shape: check}
+        - {label: Today, shape: dot}
+        - {label: Booked, shape: half}
+        - {label: Free, shape: dashed}
+        - {label: 2 spaces left, shape: warn}
+    - table:
+        columns: [Day, Class, Time, Spaces]
+        rows:
+          - [Wed, Intro to lead, 7pm, Booked]
+          - [Wed, Technique clinic, 8pm, Full]
+      align: lllr
+      highlight: 0
+  tokens:
+    - [Spacing, "4, 8, 12, 16, 24, 32, 48 px"]
+    - [Corners, "6 px controls, 12 px sheets; one step softer than an office tool"]
+    - [Elevation, "None on the page. One shadow, only for sheets and dialogs"]
+    - [Targets, "48 px minimum on phone; people book with chalky hands"]

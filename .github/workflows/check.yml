@@ -11,9 +11,10 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install jinja2 pyyaml
-      - name: Example spec is complete and valid
-        run: python generator/generate.py check examples/bindery/spec.yaml --strict
-      - name: Example renders
-        run: python generator/generate.py build examples/bindery/spec.yaml -o /tmp/bindery
+      - name: Examples are complete, valid and render
+        run: |
+          for spec in examples/*/spec.yaml; do
+            python generator/generate.py build "$spec" -o "/tmp/$(basename "$(dirname "$spec")")" --strict
+          done
       - name: Starter template renders
         run: python generator/generate.py build template/spec.yaml -o /tmp/template

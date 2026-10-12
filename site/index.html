@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ux-boards examples</title>
+<meta name="description" content="Turn one YAML file into UX documentation boards: information architecture, navigation by screen size, wireframes and a visual system.">
+<style>
+  :root { --ink: #1D1D1D; --muted: #5E5E5E; --rule: #DADADA; --bg: #FFFFFF; --shelf: #F4F4F2; }
+  @media (prefers-color-scheme: dark) { :root { --ink: #EDEDED; --muted: #A8A8A8; --rule: #3A3A3A; --bg: #161616; --shelf: #1F1F1F; } }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.55 'Helvetica Neue', Helvetica, Arial, sans-serif; }
+  main { max-width: 1080px; margin: 0 auto; padding: 56px 20px 80px; }
+  .eyebrow { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  h1 { font-size: clamp(34px, 6vw, 52px); line-height: 1.05; margin: 8px 0 14px; letter-spacing: -.02em; }
+  .lede { font-size: 19px; max-width: 680px; color: var(--muted); margin: 0 0 22px; }
+  a { color: inherit; }
+  .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 44px; }
+  .btn { display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border: 1.5px solid var(--ink); border-radius: 4px; font-weight: 700; text-decoration: none; }
+  .btn.primary { background: var(--ink); color: var(--bg); }
+  hr { border: 0; border-top: 1px solid var(--ink); margin: 0 0 36px; }
+  .examples { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; }
+  .ex img { width: 100%; border: 1px solid var(--rule); border-radius: 6px; display: block; background: #fff; }
+  .ex h2 { font-size: 24px; margin: 18px 0 4px; }
+  .ex p { margin: 0 0 12px; color: var(--muted); }
+  .links { display: flex; flex-wrap: wrap; gap: 6px 18px; font-weight: 600; }
+  section.use { margin-top: 64px; padding-top: 28px; border-top: 1px solid var(--rule); }
+  section.use h2 { font-size: 24px; margin: 0 0 12px; }
+  pre { background: var(--shelf); padding: 16px 18px; border-radius: 6px; overflow-x: auto; font: 14px/1.6 ui-monospace, Menlo, Consolas, monospace; }
+  footer { margin-top: 48px; font-size: 14px; color: var(--muted); }
+</style>
+</head>
+<body>
+<main>
+  <div class="eyebrow">ux-boards · examples</div>
+  <h1>UX documentation from one YAML file</h1>
+  <p class="lede">Information architecture, navigation by screen size, wireframes and a visual system with contrast checks, rendered as boards you can share or print. Both products below are fictional.</p>
+  <div class="actions">
+    <a class="btn primary" href="https://github.com/ShazMoghaddam/ux-boards">View on GitHub</a>
+    <a class="btn" href="https://github.com/ShazMoghaddam/ux-boards/blob/main/docs/GUIDE.md">Read the method</a>
+  </div>
+  <hr>
+  <div class="examples">
+    <article class="ex">
+      <a href="bindery/"><img src="bindery/01-information-architecture.png" alt="Bindery information architecture board" loading="lazy"></a>
+      <h2>Bindery</h2>
+      <p>Stock and customer orders for independent bookshops. Staff-facing, used at the counter and in the back office.</p>
+      <div class="links"><a href="bindery/">All boards</a><a href="bindery/boards.pdf">PDF</a><a href="https://github.com/ShazMoghaddam/ux-boards/blob/main/examples/bindery/spec.yaml">The spec</a></div>
+    </article>
+    <article class="ex">
+      <a href="belaybook/"><img src="belaybook/06-visual-system.png" alt="Belaybook visual system board" loading="lazy"></a>
+      <h2>Belaybook</h2>
+      <p>Class and session booking for climbing gym members. Customer-facing, used mostly on a phone.</p>
+      <div class="links"><a href="belaybook/">All boards</a><a href="belaybook/boards.pdf">PDF</a><a href="https://github.com/ShazMoghaddam/ux-boards/blob/main/examples/belaybook/spec.yaml">The spec</a></div>
+    </article>
+  </div>
+  <section class="use">
+    <h2>Make your own</h2>
+<pre>git clone https://github.com/ShazMoghaddam/ux-boards.git && cd ux-boards
+pip install -r requirements.txt
+python generator/generate.py init projects/my-product
+python generator/generate.py build projects/my-product/spec.yaml -o projects/my-product/out</pre>
+  </section>
+  <footer>MIT licence. Made by <a href="https://shazmoghaddam.github.io">Shaz Moghaddam</a>.</footer>
+</main>
+</body>
+</html>

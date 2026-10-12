@@ -1,0 +1,53 @@
+name: pages
+
+# Publishes the example boards to GitHub Pages.
+# One-off setup: Settings > Pages > Source: GitHub Actions.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install jinja2 pyyaml
+      - name: Assemble site
+        run: |
+          mkdir -p _site
+          cp site/index.html _site/
+          for ex in examples/*/; do
+            name=$(basename "$ex")
+            mkdir -p "_site/$name"
+            # committed PDF and PNGs, then a fresh HTML build from the spec
+            cp "$ex"out/*.png "$ex"out/boards.pdf "_site/$name/" 2>/dev/null || true
+            python generator/generate.py build "$ex"spec.yaml -o "_site/$name"
+          done
+          touch _site/.nojekyll
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

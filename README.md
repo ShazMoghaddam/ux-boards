@@ -93,8 +93,14 @@ Python 3.10 or newer, Jinja2 and PyYAML. Playwright with Chromium is optional an
 
 [MIT](LICENSE). Use it for client work, change it, ship it in your own tools. Attribution is appreciated but not required beyond keeping the licence file.
 
-Fonts are not bundled. The example loads Literata and Source Sans 3 from Google Fonts at render time, both under the SIL Open Font License, which allows embedding them in the PDFs you produce.
+Fonts are not bundled. The examples load Literata, Source Sans 3, Fraunces and Inter from Google Fonts at render time, all under the SIL Open Font License, which allows embedding them in the PDFs you produce.
 
 ## Contributing
 
 Issues and pull requests are welcome, especially new block types, more example projects in different domains, and accessibility fixes. Please keep example content fictional.
+
+## Author
+
+Made by **Shaz Moghaddam**, a Python developer and data scientist in London.
+
+[shazmoghaddam.github.io](https://shazmoghaddam.github.io/) · [GitHub](https://github.com/ShazMoghaddam) · [LinkedIn](https://www.linkedin.com/in/shazmoghaddam)

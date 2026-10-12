@@ -1,0 +1,471 @@
+# Worked example: Bindery, a fictional stock and customer-orders app for
+# independent bookshops. Every name, number and person below is invented.
+# Build it with:
+#   python generator/generate.py build examples/bindery/spec.yaml -o examples/bindery/out --pdf --png
+
+project:
+  name: Bindery
+  short: Bd
+  tagline: Stock and customer orders for independent bookshops
+
+release_labels:
+  1: First release
+  2: Next release
+
+# ------------------------------------------------------------------ Step 1: structure
+ia:
+  intro: >-
+    Five sections, ordered by how often a bookseller needs them during a shift.
+    These boards fix structure and behaviour only. Visual style comes in step 2.
+  sections:
+    - route: /
+      name: Today
+      question: What needs doing before the shop closes?
+      pages:
+        - name: Today
+          note: Next action, orders to collect, deliveries due, low stock
+        - name: First-run setup
+          note: Same address. A four-step checklist until the shop can take orders
+    - route: /orders
+      name: Orders
+      question: Books customers have asked for, from request to collection.
+      pages:
+        - name: Order list
+          note: Filter by status, customer, supplier. Search
+        - name: Order
+          route: /orders/:id
+          note: The order trail, customer, book, messages
+        - name: New order
+          route: /orders/new
+        - name: Message customers
+          route: /orders/ready/notify
+          release: 2
+          note: One message to everyone whose book has arrived
+    - route: /stock
+      name: Stock
+      question: What is on the shelves, and what needs reordering.
+      pages:
+        - name: Stock list
+          note: Filter by section, supplier, low stock. Search by title or ISBN
+        - name: Title
+          route: /stock/:isbn
+          note: Copies, location, sales, reorder level
+        - name: Receive delivery
+          route: /stock/receive
+        - name: Import invoice
+          route: /stock/import
+          release: 2
+          note: Upload, match columns, review rows, confirm
+    - route: /suppliers
+      name: Suppliers
+      question: Who you buy from, and what is on its way.
+      pages:
+        - name: Suppliers
+          note: Active accounts, open orders, average lead time
+        - name: Add supplier
+          route: /suppliers/new
+        - name: Supplier
+          route: /suppliers/:id
+          release: 2
+          note: Terms, contacts, order history
+    - route: /settings
+      name: Settings
+      question: Your shop, your team, and your till.
+      pages:
+        - name: Shop
+          route: /settings/shop
+          note: Name, opening hours, collection shelf
+        - name: Team and roles
+          route: /settings/team
+          release: 2
+          note: Invite staff, owner or bookseller
+
+  journeys:
+    - name: Fill an order
+      paths:
+        - [Today headline, Order, Check stock, Reserve a copy, Tell the customer, Ready to collect]
+    - name: Receive books
+      paths:
+        - [Stock, Receive delivery, "Back to stock, rows highlighted"]
+        - [{label: Upload invoice, release: 2}, {label: Match columns, release: 2}, {label: Review rows, release: 2}, {label: Confirm, release: 2}]
+    - name: First run
+      paths:
+        - [Name your shop, Add or import stock, Add a supplier, Take a first order]
+
+  notes:
+    - title: Cross-links
+      body: An order opens its title in stock. A supplier opens its open orders, already filtered. The Today headline goes straight to the orders that need action.
+    - title: Outside the sections
+      body: Sign in. Customer-facing collection page (read only). Not found. Errors that name the supplier and what to try next.
+    - title: The API needs two additions
+      body: 1. List orders across every status with paging. 2. Stock lookup by ISBN that returns the shelf location.
+
+# ------------------------------------------------------------------ breakpoints
+breakpoints:
+  intro: >-
+    Four breakpoints chosen around the devices booksellers actually use: a phone at the shelves,
+    an iPad on the counter, a laptop in the back office. Nothing is the desktop shrunk.
+  devices:
+    - kind: phone
+      name: Phone
+      range: under 768
+      description: Bottom tab bar, five labelled tabs, reachable with a thumb. Page title and one primary action in the header.
+    - kind: tablet
+      name: Tablet
+      range: 768 to 1199
+      description: An 88 px rail, icon above label. Leaves the width for content on an iPad in portrait at the till.
+    - kind: desktop
+      name: Laptop 1200 to 1599 · Desktop 1600 and up
+      description: A 248 px sidebar with labels; its foot shows the shop and who is signed in. Detail opens in a right panel (dashed). On desktop the panel stays open and content is capped at 1280 px.
+  columns: [Phone, Tablet, Laptop and desktop]
+  patterns:
+    - pattern: Page actions
+      cells:
+        - One primary action in the header; the rest in a More menu
+        - Primary and one secondary action in the header
+        - All actions in the header, primary rightmost
+    - pattern: Stock and order tables
+      cells:
+        - A list grouped by status or section; copies on the right
+        - Four columns; supplier and location move to a second line
+        - Full table with separate In stock and On order columns
+    - pattern: Filters
+      cells:
+        - Filters button opens a bottom sheet; active filters show as removable chips
+        - Filters button opens a popover; chips below the search
+        - Inline filter bar; every choice visible
+    - pattern: Detail and edit
+      cells:
+        - Full screen with a back button
+        - Side sheet over the list
+        - Right panel beside the table, which keeps its scroll position
+    - pattern: Forms
+      cells:
+        - One column, full width, action bar fixed to the bottom
+        - One column, at most 560 px wide
+        - One column, at most 560 px, in the panel or a page
+    - pattern: Multi-step tasks
+      cells:
+        - Full-screen task; tabs hidden; Exit at top left
+        - text: A centred 640 px column with a step indicator; navigation hidden behind an Exit link so the task has the screen
+          span: 2
+
+shell:
+  nav_foot: [Marlow Lane Books, Open until 6pm, Sam (owner)]
+
+# ------------------------------------------------------------------ screens
+screens:
+  - title: Today, phone and tablet
+    route: /
+    purpose: One headline action, then the order trail, then what changed. The tablet keeps the same order and gains a little room.
+    frames:
+      - device: phone
+        nav: Today
+        appbar: {left: Bindery, right: "Thu 8 Oct"}
+        blocks:
+          - eyebrow: Next step
+          - title: 3 orders are ready to collect
+          - text: Arrived this morning. The oldest has waited 2 days.
+          - button: Tell the customers
+            full: true
+          - divider: true
+          - segments:
+              - {label: Requested, sub: 6 Oct, state: done}
+              - {label: Ordered, sub: 6 Oct, state: done}
+              - {label: Arrived, sub: Today, state: current}
+              - {label: Collected, sub: Not yet, state: todo}
+          - heading: This week
+          - rows:
+              - [Orders taken, "14"]
+              - [Copies sold, "212"]
+              - {label: Below reorder level, value: "9", strong: true}
+          - heading: Recent
+            link: All orders
+          - list:
+              - {title: The Overstory, meta: "A. Reyes · arrived today", value: Ready}
+              - {title: Piranesi, meta: "M. Okafor · ordered 6 Oct", value: Ordered}
+      - device: tablet
+        nav: Today
+        blocks:
+          - header: 3 orders are ready to collect
+            eyebrow: Next step
+            text: Arrived this morning. The oldest has waited 2 days.
+            actions: [{value: Tell the customers, kind: primary}]
+          - divider: true
+          - segments:
+              - {label: Requested, range: "6 Oct", sub: Done, state: done}
+              - {label: Ordered, range: "6 Oct", sub: Done, state: done}
+              - {label: Arrived, range: Today, sub: Ready to collect, state: current}
+              - {label: Collected, sub: Not yet, state: todo}
+          - heading: This week
+          - rows:
+              - {label: Orders taken, cols: ["Mon to Wed 9", "Thu 5"], value: "14"}
+              - {label: Copies sold, cols: ["148", "64"], value: "212"}
+              - {label: Below reorder level, cols: ["", ""], value: "9", strong: true}
+          - heading: Recent orders
+            link: All orders
+          - list:
+              - {title: The Overstory, meta: "A. Reyes · Fiction · arrived today", value: Ready}
+              - {title: Piranesi, meta: "M. Okafor · Fiction · ordered 6 Oct", value: Ordered}
+              - {title: Braiding Sweetgrass, meta: "L. Chen · Nature · requested 7 Oct", value: Requested}
+
+  - title: Stock, laptop
+    route: /stock
+    purpose: Filters always visible, a full table, and detail in the right panel so the table keeps its scroll position.
+    frames:
+      - device: desktop
+        nav: Stock
+        blocks:
+          - header: Stock
+            small: true
+            actions: [Import invoice, {value: "+ Receive delivery", kind: primary}]
+          - filters:
+              - {label: Search, value: Title, author or ISBN}
+              - {label: Section, value: All, select: true}
+              - {label: Supplier, value: All, select: true}
+              - {label: Show, value: Below reorder level, select: true}
+          - text: 9 titles below their reorder level. 31 copies on order.
+            small: true
+          - table:
+              columns: [Title, Section, Supplier, In stock, On order]
+              rows:
+                - [The Overstory, Fiction, Northbook, "0", "2"]
+                - [Piranesi, Fiction, Northbook, "1", "3"]
+                - [Braiding Sweetgrass, Nature, Riverside, "1", "4"]
+                - [The Wild Silence, Nature, Riverside, "0", "2"]
+                - [A Little Life, Fiction, Northbook, "2", "0"]
+                - [Entangled Life, Science, Riverside, "1", "5"]
+              foot: ["Showing 1 to 6 of 9", Next page]
+            align: lllrr
+            highlight: 0
+        panel:
+          - eyebrow: Fiction · ISBN 978…5442
+          - title: The Overstory
+            small: true
+          - rows:
+              - [In stock, "0"]
+              - [On order, "2 from Northbook"]
+              - [Reorder level, "2"]
+              - [Sold this month, "7"]
+              - [Shelf, "F, bay 3"]
+          - text: One copy is reserved for A. Reyes and will not show as available.
+            muted: true
+            small: true
+          - buttons: [{value: Reorder, kind: primary}, Edit]
+
+  - title: Fill an order, phone
+    route: /orders/1042/fill
+    purpose: A full-screen task with the tabs hidden. Three steps, one decision each, and nothing is sent until the last.
+    frames:
+      - device: phone
+        appbar: {title: Fill order 1042, right: "Exit ✕"}
+        blocks:
+          - stepper: {step: 1, total: 3}
+          - title: Check the copy
+            small: true
+          - text: The Overstory, paperback. One copy arrived today from Northbook.
+          - rows:
+              - [Customer, A. Reyes]
+              - [Paid, "Deposit £5.00"]
+              - [Shelf, "Collection, C2"]
+          - callout: If this is the wrong edition, reorder before you reserve it.
+            link: Reorder
+        footer:
+          - button: This is the right copy
+            full: true
+      - device: phone
+        appbar: {left: "‹ Back", title: Fill order 1042, right: Exit}
+        blocks:
+          - stepper: {step: 2, total: 3}
+          - title: How should we tell them?
+            small: true
+          - text: A. Reyes asked to hear by text.
+          - choices:
+              - {label: Text message, desc: To 07•••• •••482, note: Their choice, selected: true}
+              - {label: Email, desc: a•••@example.com}
+              - {label: "Don't send", desc: Mark ready without a message}
+        footer:
+          - button: Continue
+            full: true
+      - device: phone
+        appbar: {left: "‹ Back", title: Fill order 1042, right: Exit}
+        blocks:
+          - stepper: {step: 3, total: 3}
+          - title: Confirm and send
+            small: true
+          - rows:
+              - [Book, The Overstory]
+              - [Customer, A. Reyes]
+              - [Message, Text]
+              - [Hold until, "15 Oct"]
+          - checkbox: The copy is on the collection shelf.
+        footer:
+          - text: Tick the box to send.
+            muted: true
+            small: true
+          - button: Send and mark ready
+            kind: disabled
+            full: true
+
+  - title: Today, laptop
+    route: /
+    style: styled
+    eyebrow: Step 3 · Screens in the visual system
+    purpose: The same structure as the wireframe, now with the indigo action colour, serif headings and the order trail.
+    frames:
+      - device: desktop
+        nav: Today
+        blocks:
+          - header: 3 orders are ready to collect
+            text: Arrived this morning from Northbook. The oldest has waited 2 days.
+            actions: [{value: Tell the customers, kind: primary}]
+          - segments:
+              - {label: Requested, sub: 6 Oct, state: done}
+              - {label: Ordered, sub: 6 Oct, state: done}
+              - {label: Arrived, sub: "Today, 3 orders", state: current}
+              - {label: Collected, sub: Not yet, state: todo}
+          - columns:
+              - - heading: This week
+                - rows:
+                    - [Orders taken, "14"]
+                    - [Copies sold, "212"]
+                    - {label: Below reorder level, value: "9", strong: true}
+                - text: Week starts Monday. Sales include the online shop.
+                  muted: true
+                  small: true
+              - - heading: Recent orders
+                  link: All orders
+                - table:
+                    columns: [Date, Title, Customer, Status]
+                    rows:
+                      - [8 Oct, The Overstory, A. Reyes, Ready]
+                      - [8 Oct, Piranesi, M. Okafor, Ready]
+                      - [7 Oct, Braiding Sweetgrass, L. Chen, Ordered]
+                      - [6 Oct, Entangled Life, P. Novak, Ordered]
+                  align: lllr
+        panel:
+          - heading: Deliveries due
+          - rows:
+              - [Northbook, Today]
+              - [Riverside, Mon 12 Oct]
+          - buttons: [Receive delivery]
+          - heading: Shop
+          - rows:
+              - [Open, Until 6pm]
+              - [Collection shelf, "C, 11 waiting"]
+
+  - title: Stock and confirm, phone
+    route: /stock · /orders/:id/fill
+    style: styled
+    eyebrow: Step 3 · Screens in the visual system
+    purpose: Lists group by section under serif headings. The final step of a task always restates what will happen before anything is sent.
+    frames:
+      - device: phone
+        nav: Stock
+        blocks:
+          - header: Stock
+            small: true
+            actions: [{value: "+ Receive", kind: primary}]
+          - search: Search
+            filters: Filters
+          - chips: [Below reorder level, {label: Fiction, removable: true}]
+          - text: 5 titles. 7 copies on order.
+            small: true
+          - list:
+              - group: Fiction
+              - {title: The Overstory, meta: "0 in stock, 2 on order", value: Low, warn: true}
+              - {title: Piranesi, meta: "1 in stock, 3 on order", value: Low, warn: true}
+              - {title: A Little Life, meta: "2 in stock", value: "2"}
+              - group: Translated fiction
+              - {title: The Employees, meta: "0 in stock, 2 on order", value: Low, warn: true}
+      - device: phone
+        appbar: {left: "‹ Back", title: Fill order 1042, right: Exit}
+        blocks:
+          - stepper: {step: 3, total: 3, labels: [Check, Message, Send]}
+          - title: Confirm and send
+            small: true
+          - text: This is what A. Reyes will receive.
+          - rows:
+              - [Book, The Overstory]
+              - [Message, Text to 07•••• •••482]
+              - [Hold until, "15 Oct"]
+          - checkbox: The copy is on the collection shelf.
+            boxed: true
+          - text: If they do not collect by 15 Oct, Bindery reminds you, not them.
+            muted: true
+            small: true
+        footer:
+          - text: Tick the box to send.
+            muted: true
+            small: true
+          - button: Send and mark ready
+            kind: disabled
+            full: true
+
+# ------------------------------------------------------------------ Step 2: visual system
+visual:
+  intro: >-
+    Warm paper, ruled lists instead of cards, one indigo for actions, and every order drawn as a trail.
+  accessibility_note: >-
+    Every text colour passes WCAG AA on white (checked by the generator). Status is always
+    carried by words and shape as well as colour.
+  colours:
+    - {name: Ink, hex: "#1E2230", use: "Text, totals rule, finished steps", token: ink}
+    - {name: Muted, hex: "#565C6E", use: "Secondary text, captions", token: muted}
+    - {name: Indigo, hex: "#2F3E8F", use: "Primary actions, links, current step", token: primary}
+    - {name: Indigo tint, hex: "#E6E9F5", use: "Selected row, current nav item", role: fill, token: tint}
+    - {name: Paper, hex: "#F5F4EF", use: "Navigation, sheets behind content", role: fill, token: shelf}
+    - {name: Rule, hex: "#D8DAE0", use: "Row dividers; input borders use Muted", role: line, token: rule}
+    - {name: Amber, hex: "#8A4B00", on: "#FBEFD9", use: "Low stock, waiting too long", token: warning}
+    - {name: Red, hex: "#A1262B", use: "Errors and destructive actions only", token: danger}
+  rules:
+    - Stock levels are never green and red. Low stock is a word ("Low") and an amber tag, never colour alone.
+  type:
+    import_url: "https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,600&family=Source+Sans+3:wght@400;600;700&display=swap"
+    serif: {family: "Literata, Georgia, serif"}
+    sans: {family: "'Source Sans 3', 'Helvetica Neue', Arial, sans-serif"}
+    scale:
+      - {role: Page title, font: serif, size: 32, line: 38, weight: 600, sample: 3 orders are ready to collect}
+      - {role: Section, font: serif, size: 22, line: 28, weight: 600, sample: This week}
+      - {role: Key figure, font: sans, size: 34, line: 40, weight: 600, tabular: true, sample: "212"}
+      - {role: Label, font: sans, size: 16, line: 24, weight: 600, sample: Reorder level}
+      - {role: Body and tables, font: sans, size: 16, line: 24, weight: 400, sample: Bindery reminds you when a reserved book has waited a week.}
+      - {role: Caption, font: sans, size: 14, line: 20, weight: 400, muted: true, sample: "Fiction, bay 3. 2 on order."}
+  signature:
+    name: The order trail
+    description: The one signature element. It appears on Today and on every order, full width on laptop and as a compact strip on phone.
+    marker: {at: 54, label: "Now, 8 Oct"}
+    segments:
+      - {label: Requested, sub: "6 Oct", state: done}
+      - {label: Ordered, sub: "6 Oct, Northbook", state: done}
+      - {label: Arrived, sub: Ready to collect, state: current}
+      - {label: Collected, sub: Not yet, state: progress}
+  components:
+    - buttons:
+        - {value: Tell the customers, kind: primary}
+        - {value: Import invoice, kind: secondary}
+        - {value: Cancel, kind: ghost}
+        - {value: Delete order, kind: danger}
+        - {value: Send, kind: disabled}
+    - buttons: [{value: Focused, kind: focused}]
+    - fields:
+        - {label: Copies received, hint: Count every copy in the box, value: "4"}
+        - {label: ISBN, error: "Enter 13 digits, like 978 0 00 000000 0", value: "97800"}
+    - status:
+        - {label: Collected, shape: check}
+        - {label: Ready, shape: dot}
+        - {label: Ordered, shape: half}
+        - {label: Requested, shape: dashed}
+        - {label: Waited 5 days, shape: warn}
+    - table:
+        columns: [Date, Title, Customer, Status]
+        rows:
+          - [8 Oct, The Overstory, A. Reyes, Ready]
+          - [7 Oct, Braiding Sweetgrass, L. Chen, Ordered]
+      align: lllr
+      highlight: 0
+  tokens:
+    - [Spacing, "4, 8, 12, 16, 24, 32, 48, 64 px"]
+    - [Corners, "4 px controls, 8 px sheets and dialogs, nothing rounder"]
+    - [Elevation, "None on the page. One shadow, only for sheets, menus and dialogs"]
+    - [Targets, "44 px minimum; table rows 44 px on laptop, list rows 56 px on phone"]

@@ -1,0 +1,252 @@
+{# ux-boards: one HTML file, one .board per printed page. #}
+{% macro mark(n) %}<span class="mark{{ ' next' if n|int > 1 }}" title="{{ labels[n] if n in labels else '' }}">{{ n }}</span>{% endmacro %}
+
+{% macro btn(b) %}
+{% set kind = b.kind if b.kind is defined else 'primary' %}
+<span class="btn {{ kind }}{{ ' full' if b.full is defined and b.full }}">{% if b.icon is defined %}<span class="ico">{{ b.icon }}</span>{% endif %}{{ b.value if b.value is defined else b.label }}</span>
+{% endmacro %}
+
+{% macro segments(items, ticks=None, marker=None) %}
+<div class="seg{{ ' has-marker' if marker }}" style="--n: {{ items|length }}">
+  {% if ticks %}<div class="ticks">{% for t in ticks %}<span>{{ t }}</span>{% endfor %}</div>{% endif %}
+  {% if marker %}<div class="marker" style="left: {{ marker.at }}%"><span>{{ marker.label }}</span></div>{% endif %}
+  {% for s in items %}
+  <div class="segcell">
+    <div class="bar {{ s.state | default('todo') }}"></div>
+    <div class="seglabel"><b>{{ s.label }}</b>{% if s.range is defined %} {{ s.range }}{% endif %}</div>
+    {% if s.sub is defined %}<div class="segsub{{ ' strong' if s.state is defined and s.state == 'current' }}">{{ s.sub }}</div>{% endif %}
+  </div>
+  {% endfor %}
+</div>
+{% endmacro %}
+
+{% macro block(b) %}
+{% set t = b.type %}{% set v = b.value %}
+{% if t == 'eyebrow' %}<div class="b-eyebrow">{{ v }}</div>
+{% elif t == 'title' %}<h1 class="b-title{{ ' small' if b.small is defined }}">{{ v }}</h1>
+{% elif t == 'heading' %}<div class="b-heading"><h2>{{ v }}{% if b.aside is defined %}<span class="aside"> · {{ b.aside }}</span>{% endif %}</h2>{% if b.link is defined %}<span class="link">{{ b.link }}</span>{% endif %}</div>
+{% elif t == 'text' %}<p class="b-text{{ ' muted' if b.muted is defined and b.muted }}{{ ' small' if b.small is defined }}">{{ v }}{% if b.link is defined %} <span class="link">{{ b.link }}</span>{% endif %}</p>
+{% elif t == 'button' %}<div class="b-button">{{ btn(b) }}</div>
+{% elif t == 'buttons' %}<div class="b-buttons">{% for x in v %}{{ btn(x if x is mapping else {'value': x, 'kind': 'secondary'}) }}{% endfor %}</div>
+{% elif t == 'header' %}
+<div class="b-header"><div>{% if b.eyebrow is defined %}<div class="b-eyebrow">{{ b.eyebrow }}</div>{% endif %}<h1 class="b-title{{ ' small' if b.small is defined }}">{{ v }}</h1>{% if b.text is defined %}<p class="b-text">{{ b.text }}</p>{% endif %}</div>
+<div class="b-buttons">{% for x in b.actions | default([]) %}{{ btn(x if x is mapping else {'value': x, 'kind': 'secondary'}) }}{% endfor %}</div></div>
+{% elif t == 'segments' %}{{ segments(v, b.ticks if b.ticks is defined else None, b.marker if b.marker is defined else None) }}
+{% elif t == 'rows' %}
+<div class="rows">{% for r in v %}{% set r = r if r is mapping else {'label': r[0], 'value': r[1]} %}
+  <div class="row{{ ' strong' if r.strong is defined }}{{ ' muted' if r.muted is defined }}{{ ' indent' if r.indent is defined }}"><span>{{ r.label }}</span>{% if r.cols is defined %}{% for c in r.cols %}<span class="num">{{ c }}</span>{% endfor %}{% endif %}<span class="num">{{ r.value }}</span></div>
+{% endfor %}</div>
+{% elif t == 'list' %}
+<div class="list">{% for it in v %}
+  {% if it.group is defined %}<div class="group">{{ it.group }}</div>
+  {% else %}<div class="li"><div><div class="li-title">{{ it.title }}</div>{% if it.meta is defined %}<div class="li-meta">{{ it.meta }}</div>{% endif %}</div>{% if it.value is defined %}<div class="num li-value{{ ' warn' if it.warn is defined and it.warn }}">{{ it.value }}</div>{% endif %}</div>{% endif %}
+{% endfor %}</div>
+{% elif t == 'table' %}
+{% set al = b.align | default('') %}
+<table class="t"><thead><tr>{% for c in v.columns %}<th class="{{ 'r' if al[loop.index0] == 'r' }}">{{ c }}</th>{% endfor %}</tr></thead><tbody>
+{% for row in v.rows %}{% if row is mapping %}<tr class="grp"><td colspan="{{ v.columns|length }}">{{ row.group }}</td></tr>{% else %}
+<tr class="{{ 'hl' if b.highlight is defined and b.highlight == loop.index0 }}">{% for c in row %}<td class="{{ 'r num' if al[loop.index0] == 'r' }}">{{ c }}</td>{% endfor %}</tr>{% endif %}{% endfor %}
+</tbody></table>
+{% if v.foot is defined %}<div class="t-foot">{% for f in v.foot %}<span>{{ f }}</span>{% endfor %}</div>{% endif %}
+{% elif t == 'stepper' %}
+<div class="stepper" style="--n: {{ v.total }}">{% for i in range(v.total) %}<div class="st{{ ' on' if i < v.step }}">{% if v.labels is defined %}<span>{{ v.labels[i] }}</span>{% endif %}</div>{% endfor %}</div>
+{% if v.labels is not defined %}<div class="b-text muted small">Step {{ v.step }} of {{ v.total }}</div>{% endif %}
+{% elif t == 'choices' %}
+<div class="choices">{% for o in v %}<div class="choice{{ ' on' if o.selected is defined and o.selected }}"><span class="radio"></span><div><b>{{ o.label }}</b>{% if o.desc is defined %}<div>{{ o.desc }}</div>{% endif %}{% if o.note is defined %}<div class="muted small">{{ o.note }}</div>{% endif %}</div></div>{% endfor %}</div>
+{% elif t == 'checkbox' %}<div class="check{{ ' boxed' if b.boxed is defined }}"><span class="box"></span><span>{{ v }}</span></div>
+{% elif t == 'callout' %}<div class="callout"><p>{{ v }}</p>{% if b.link is defined %}<span class="link">{{ b.link }}</span>{% endif %}</div>
+{% elif t == 'chips' %}<div class="chips">{% for c in v %}{% set c = c if c is mapping else {'label': c} %}<span class="chip{{ ' on' if c.removable is defined }}">{{ c.label }}{% if c.removable is defined %} ×{% endif %}</span>{% endfor %}</div>
+{% elif t == 'search' %}<div class="search"><span class="input">⌕ {{ v }}</span>{% if b.filters is defined %}<span class="btn secondary">{{ b.filters }}</span>{% endif %}</div>
+{% elif t == 'filters' %}<div class="filters">{% for f in v %}<label><span>{{ f.label }}</span><span class="input{{ ' select' if f.select is defined }}">{{ f.value }}</span></label>{% endfor %}</div>
+{% elif t == 'field' %}
+<div class="field{{ ' error' if v.error is defined }}"><b>{{ v.label }}</b>{% if v.hint is defined %}<div class="hint">{{ v.hint }}</div>{% endif %}{% if v.error is defined %}<div class="err">{{ v.error }}</div>{% endif %}<span class="input">{{ v.value | default('') }}</span></div>
+{% elif t == 'fields' %}<div class="fields">{% for f in v %}{{ block({'type': 'field', 'value': f}) }}{% endfor %}</div>
+{% elif t == 'status' %}<div class="status">{% for s in v %}<span class="st-{{ s.shape | default('dot') }}"><i></i>{{ s.label }}</span>{% endfor %}</div>
+{% elif t == 'checklist' %}<div class="checklist">{% for c in v %}<div>✓ {{ c }}</div>{% endfor %}</div>
+{% elif t == 'success' %}<div class="success"><span class="tick">✓</span></div>
+{% elif t == 'code' %}<div class="code">{{ v }}</div>
+{% elif t == 'divider' %}<hr class="divider">
+{% elif t == 'spacer' %}<div style="height: {{ v }}px"></div>
+{% elif t == 'columns' %}<div class="b-cols" style="--n: {{ v|length }}">{% for col in v %}<div>{% for x in col %}{{ block(x) }}{% endfor %}</div>{% endfor %}</div>
+{% else %}<div class="b-unknown">Unknown block “{{ t }}”</div>
+{% endif %}
+{% endmacro %}
+
+{% macro navicon(i) %}<svg class="nicon" viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="3"/></svg>{% endmacro %}
+
+{% macro frame(fr) %}
+{% set dev = fr.device %}{% set nav = fr.nav | default(false) %}
+<div class="dev dev-{{ dev }}" style="width: {{ fr.w }}px; height: {{ fr.h }}px">
+  {% if nav and dev == 'tablet' %}
+  <nav class="rail"><div class="brand">{{ project.short | default(project.name[:2]) }}</div>{% for n in nav_items %}<div class="ni{{ ' on' if n == nav }}">{{ navicon(loop.index) }}<span>{{ n }}</span></div>{% endfor %}</nav>
+  {% elif nav and dev == 'desktop' %}
+  <nav class="side"><div class="brand">{{ project.name }}</div>{% for n in nav_items %}<div class="ni{{ ' on' if n == nav }}">{{ navicon(loop.index) }}<span>{{ n }}</span></div>{% endfor %}
+    <div class="foot">{% for l in nav_foot %}<div class="{{ 'b' if loop.first }}">{{ l }}</div>{% endfor %}</div></nav>
+  {% endif %}
+  <div class="col">
+    {% if fr.appbar is defined %}<div class="appbar"><span>{{ fr.appbar.left | default('') }}</span><b>{{ fr.appbar.title | default('') }}</b><span class="r">{{ fr.appbar.right | default('') }}</span></div>{% endif %}
+    <main class="body">{% for b in fr.blocks %}{{ block(b) }}{% endfor %}</main>
+    {% if fr.footer %}<div class="footer">{% for b in fr.footer %}{{ block(b) }}{% endfor %}</div>{% endif %}
+    {% if nav and dev == 'phone' %}<nav class="tabs">{% for n in nav_items %}<div class="ni{{ ' on' if n == nav }}">{{ navicon(loop.index) }}<span>{{ n }}</span></div>{% endfor %}</nav>{% endif %}
+  </div>
+  {% if fr.panel and dev == 'desktop' %}<aside class="panel">{% for b in fr.panel %}{{ block(b) }}{% endfor %}</aside>{% endif %}
+</div>
+{% endmacro %}
+
+{% macro theme_vars(t) %}{% for k, v in t.items() %}--{{ k }}: {{ v }}; {% endfor %}{% endmacro %}
+
+{% macro screen_board(sc, n) %}
+{% set styled = sc.style == 'styled' %}
+<section class="board" data-name="{{ sc.title }}" data-slug="{{ sc.title | slug }}">
+  <header class="bh">
+    <div class="eyebrow">{{ sc.eyebrow | default(('Step 3 · Screens' if styled else 'Step 1 · Wireframes')) }}{% if sc.route is defined %} · <code>{{ sc.route }}</code>{% endif %}</div>
+    <h1>{{ sc.title }}</h1>
+    {% if sc.purpose is defined %}<p class="lede">{{ sc.purpose }}</p>{% endif %}
+  </header>
+  <div class="frames {{ 'styled' if styled else 'wire' }}" style="{{ theme_vars(theme if styled else wire_theme) }} zoom: {{ sc.zoom }}">
+    {% for fr in sc.frames %}
+    <figure>{{ frame(fr) }}{% if fr.caption is defined %}<figcaption>{{ fr.caption }}</figcaption>{% endif %}</figure>
+    {% endfor %}
+  </div>
+</section>
+{% endmacro %}
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ project.name }} UX boards</title>
+{% if type.import_url is defined %}<link rel="stylesheet" href="{{ type.import_url }}">{% endif %}
+<style>
+@page { size: {{ W }}px {{ H }}px; margin: 0; }
+:root { --W: {{ W }}px; --H: {{ H }}px; --PAD: {{ PAD }}px;
+  --serif: {{ (type.serif | default({})).family | default("Georgia, 'Times New Roman', serif") }};
+  --sans: {{ (type.sans | default({})).family | default("'Helvetica Neue', Helvetica, Arial, sans-serif") }}; }
+{{ css | safe }}
+</style>
+</head>
+<body>
+
+{# ------------------------------------------------ Board 1: information architecture #}
+<section class="board" data-name="Information architecture" data-slug="information-architecture">
+  <header class="bh">
+    <div class="eyebrow">{{ ia.eyebrow | default(project.name ~ ' · Step 1 of 3 · Structure') }}</div>
+    <div class="bh-row">
+      <div><h1>{{ ia.title | default('Information architecture') }}</h1>{% if ia.intro is defined %}<p class="lede">{{ ia.intro }}</p>{% endif %}</div>
+      <div class="legend">{% for k, v in labels.items() %}<span>{{ mark(k) }} {{ v }}</span>{% endfor %}</div>
+    </div>
+  </header>
+  <div class="ia" style="--n: {{ ia.sections|length }}">
+    {% for s in ia.sections %}
+    <div class="sec">
+      <code>{{ s.route | default('') }}</code>
+      <h2>{{ s.name }}</h2>
+      {% if s.question is defined %}<p class="q">{{ s.question }}</p>{% endif %}
+      {% for pg in s.pages | default([]) %}
+      <div class="pg">{{ mark(pg.release | default(1)) }}<div><b>{{ pg.name }}</b>{% if pg.route is defined %}<code>{{ pg.route }}</code>{% endif %}{% if pg.note is defined %}<span>{{ pg.note }}</span>{% endif %}</div></div>
+      {% endfor %}
+    </div>
+    {% endfor %}
+  </div>
+  {% if ia.journeys is defined %}
+  <div class="journeys"><div class="label">Main journeys</div>
+    {% for j in ia.journeys %}
+    <div class="jr"><b>{{ j.name }}</b><div class="steps">
+      {% for path in j.paths %}{% if not loop.first %}<span class="or">or</span>{% endif %}
+        {% for st in path %}{% set st = st if st is mapping else {'label': st} %}{% set rel = st.release | default(1) %}{% set is_end = loop.last and (st.end | default(true)) and rel == 1 %}
+        {% if not loop.first %}<span class="arr">→</span>{% endif %}<span class="step{{ ' end' if is_end }}{{ ' next' if rel|int > 1 }}">{{ st.label }}</span>
+        {% endfor %}
+      {% endfor %}
+    </div></div>
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% if ia.notes is defined %}
+  <div class="notes" style="--n: {{ ia.notes|length }}">{% for nt in ia.notes %}<div><div class="label">{{ nt.title }}</div><p>{{ nt.body }}</p></div>{% endfor %}</div>
+  {% endif %}
+</section>
+
+{# ------------------------------------------------ Board 2: navigation by screen size #}
+{% if breakpoints %}
+<section class="board" data-name="Navigation by screen size" data-slug="navigation-by-screen-size">
+  <header class="bh">
+    <div class="eyebrow">{{ breakpoints.eyebrow | default('How the same structure adapts') }}</div>
+    <h1>{{ breakpoints.title | default('Navigation by screen size') }}</h1>
+    {% if breakpoints.intro is defined %}<p class="lede">{{ breakpoints.intro }}</p>{% endif %}
+  </header>
+  <div class="devices">
+    {% for d in breakpoints.devices %}
+    <div class="devc devc-{{ d.kind }}">
+      <div class="sketch sk-{{ d.kind }}">
+        {% if d.kind == 'phone' %}<div class="sk-top"></div><div class="sk-lines"><i></i><i></i><i></i><i></i></div><div class="sk-tabs">{% for n in nav_items %}<i class="{{ 'on' if loop.first }}"></i>{% endfor %}</div>
+        {% elif d.kind == 'tablet' %}<div class="sk-rail">{% for n in nav_items %}<i class="{{ 'on' if loop.first }}"></i>{% endfor %}</div><div class="sk-lines"><b></b><i></i><i></i><i></i><i></i></div>
+        {% else %}<div class="sk-side"><b></b><b></b><i></i><i></i><i></i><i></i><span></span></div><div class="sk-lines"><b></b><em></em><i></i><i></i><i></i><i></i></div><div class="sk-panel"><b></b><i></i><i></i></div>{% endif %}
+      </div>
+      <h3>{{ d.name }}{% if d.range is defined %} · {{ d.range }}{% endif %}</h3>
+      <p>{{ d.description }}</p>
+    </div>
+    {% endfor %}
+  </div>
+  {% if breakpoints.patterns is defined %}
+  <table class="ptable"><thead><tr><th>Pattern</th>{% for c in breakpoints.columns %}<th>{{ c }}</th>{% endfor %}</tr></thead><tbody>
+    {% for r in breakpoints.patterns %}<tr><th>{{ r.pattern }}</th>{% for c in r.cells %}{% if c is mapping %}<td colspan="{{ c.span | default(1) }}">{{ c.text }}</td>{% else %}<td>{{ c }}</td>{% endif %}{% endfor %}</tr>{% endfor %}
+  </tbody></table>
+  {% endif %}
+</section>
+{% endif %}
+
+{# ------------------------------------------------ Wireframe boards #}
+{% for sc in screens if sc.style != 'styled' %}{{ screen_board(sc, loop.index) }}{% endfor %}
+
+{# ------------------------------------------------ Visual system board #}
+{% if visual %}
+<section class="board vis" data-name="Visual system" data-slug="visual-system" style="{{ theme_vars(theme) }}">
+  <header class="bh">
+    <div class="eyebrow">{{ visual.eyebrow | default(project.name ~ ' · Step 2 of 3 · Visual system') }}</div>
+    <div class="bh-row">
+      <div><h1 class="serif">{{ visual.title | default(project.name ~ ' visual system') }}</h1>{% if visual.intro is defined %}<p class="lede">{{ visual.intro }}</p>{% endif %}</div>
+      {% if visual.accessibility_note is defined %}<p class="legend small">{{ visual.accessibility_note }}</p>{% endif %}
+    </div>
+  </header>
+  <div class="vis-grid">
+    <div>
+      {% if visual.colours is defined %}
+      <h2 class="serif">Colour</h2>
+      <table class="ctable"><thead><tr><th></th><th>Token</th><th>Used for</th><th class="r">On white</th></tr></thead><tbody>
+        {% for c in visual.colours %}<tr><td><span class="sw" style="background: {{ c.on | default(c.hex) }}">{% if c.on is defined %}<i style="background: {{ c.hex }}"></i>{% endif %}</span></td>
+        <td><b>{{ c.name }}</b> {{ c.hex }}{% if c.on is defined %} on {{ c.on }}{% endif %}</td><td>{{ c.use | default('') }}</td><td class="r{{ ' fail' if not c.passes }}">{{ c.ratio }}{% if not c.passes %} ✗{% endif %}</td></tr>{% endfor %}
+      </tbody></table>
+      {% for r in visual.rules | default([]) %}<p class="small muted rule-note">{{ r }}</p>{% endfor %}
+      {% endif %}
+      {% if type.scale is defined %}
+      <h2 class="serif">Type</h2>
+      <div class="tscale">{% for s in type.scale %}
+        <div class="tr"><div class="small muted">{{ s.role }}<br>{{ s.label | default((s.font | capitalize) ~ ', ' ~ s.size ~ '/' ~ s.line ~ ', ' ~ s.weight | default(400)) }}</div>
+        <div style="font-family: var(--{{ s.font | default('sans') }}); font-size: {{ s.size }}px; line-height: {{ s.line }}px; font-weight: {{ s.weight | default(400) }};{% if s.muted is defined %} color: var(--muted);{% endif %}{% if s.tabular is defined %} font-variant-numeric: tabular-nums;{% endif %}">{{ s.sample }}</div></div>
+      {% endfor %}</div>
+      {% endif %}
+    </div>
+    <div>
+      {% if visual.signature is defined %}{% set sg = visual.signature %}
+      <h2 class="serif">{{ sg.name }}</h2>
+      {% if sg.description is defined %}<p class="small muted">{{ sg.description }}</p>{% endif %}
+      <div class="sig">{{ segments(sg.segments, sg.ticks if sg.ticks is defined else None, sg.marker if sg.marker is defined else None) }}</div>
+      {% endif %}
+      {% if visual.components is defined %}
+      <h2 class="serif">Components</h2>
+      <div class="comps">{% for b in visual.components %}{{ block(b) }}{% endfor %}</div>
+      {% endif %}
+      {% if visual.tokens is defined %}
+      <dl class="tokens">{% for k in visual.tokens %}<dt>{{ k[0] }}</dt><dd>{{ k[1] }}</dd>{% endfor %}</dl>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{# ------------------------------------------------ Styled screen boards #}
+{% for sc in screens if sc.style == 'styled' %}{{ screen_board(sc, 100 + loop.index) }}{% endfor %}
+
+</body>
+</html>

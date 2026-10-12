@@ -1,0 +1,748 @@
+
+
+
+
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bindery UX boards</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,600&amp;family=Source+Sans+3:wght@400;600;700&amp;display=swap"><style>
+@page { size: 1400px 990px; margin: 0; }
+:root { --W: 1400px; --H: 990px; --PAD: 56px;
+  --serif: Literata, Georgia, serif;
+  --sans: &#39;Source Sans 3&#39;, &#39;Helvetica Neue&#39;, Arial, sans-serif; }
+/* ux-boards stylesheet. Board chrome is neutral greyscale; screen frames read
+   their colours from CSS variables so the same markup renders as a wireframe
+   or in the project's visual system. */
+
+* { box-sizing: border-box; }
+html, body { margin: 0; background: #E9E9E9; }
+body { font: 14px/1.45 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #1D1D1D; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+@media screen { body { padding: 24px 0; } .board { margin: 0 auto 24px; box-shadow: 0 1px 4px rgba(0,0,0,.12); } }
+code { font: 12px/1.4 ui-monospace, Menlo, Consolas, monospace; color: #555; }
+.small { font-size: 12px; }
+.muted { color: #666; }
+
+/* ---------------------------------------------------------------- board */
+.board { width: var(--W); height: var(--H); padding: var(--PAD); background: #fff; overflow: hidden; break-after: page; position: relative; }
+.bh { border-bottom: 1px solid #1D1D1D; padding-bottom: 20px; margin-bottom: 28px; }
+.bh h1 { font-size: 36px; line-height: 1.1; margin: 6px 0 10px; letter-spacing: -.01em; }
+.bh .lede { max-width: 760px; margin: 0; font-size: 15px; color: #333; }
+.bh-row { display: flex; justify-content: space-between; align-items: flex-end; gap: 40px; }
+.eyebrow, .label { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: #555; }
+.label { font-weight: 600; margin-bottom: 8px; }
+.legend { display: flex; gap: 18px; font-size: 12px; white-space: nowrap; }
+.legend.small { white-space: normal; max-width: 330px; color: #444; display: block; }
+.mark { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 50%; border: 1px solid #1D1D1D; font-size: 10px; flex: none; }
+.mark.next { border-style: dashed; color: #555; }
+
+/* ---------------------------------------------------------------- IA */
+.ia { display: grid; grid-template-columns: repeat(var(--n), 1fr); border-left: 1px solid #DDD; }
+.sec { padding: 0 18px; border-right: 1px solid #DDD; min-height: 360px; }
+.sec h2 { font-size: 20px; margin: 4px 0 6px; }
+.sec .q { margin: 0 0 12px; color: #333; min-height: 40px; }
+.pg { display: flex; gap: 10px; padding: 9px 0; border-top: 1px solid #E2E2E2; }
+.pg b { display: block; }
+.pg > div > code, .pg > div > span { display: block; font-size: 11.5px; }
+.pg > div > span { color: #555; }
+.journeys { margin-top: 26px; }
+.jr { display: grid; grid-template-columns: 160px 1fr; align-items: center; margin: 7px 0; }
+.steps { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.step { border: 1px solid #1D1D1D; border-radius: 3px; padding: 3px 9px; font-size: 12px; }
+.step.end { background: #1D1D1D; color: #fff; }
+.step.next { border-style: dashed; }
+.arr, .or { color: #777; font-size: 12px; }
+.or { margin: 0 6px; }
+.notes { display: grid; grid-template-columns: repeat(var(--n), 1fr); gap: 36px; margin-top: 24px; padding-top: 18px; border-top: 1px solid #DDD; }
+.notes p { margin: 0; font-size: 12.5px; }
+
+/* ---------------------------------------------------------------- breakpoints */
+.devices { display: flex; gap: 44px; align-items: flex-end; margin-bottom: 22px; }
+.devc h3 { font-size: 14px; margin: 12px 0 4px; }
+.devc p { margin: 0; font-size: 12px; max-width: 520px; color: #333; }
+.devc-phone { width: 210px; } .devc-tablet { width: 330px; } .devc-desktop, .devc-laptop { flex: 1; }
+.sketch { border: 1.5px solid #1D1D1D; border-radius: 12px; display: flex; position: relative; overflow: hidden; }
+.sketch i, .sketch b, .sketch em { display: block; height: 5px; background: #D5D5D5; border-radius: 3px; margin: 6px 0; }
+.sketch b { background: #1D1D1D; width: 45%; height: 6px; }
+.sketch em { height: 14px; background: none; border: 1px solid #CCC; }
+.sk-phone { width: 130px; height: 230px; flex-direction: column; padding: 10px; border-radius: 18px; }
+.sk-top { height: 10px; border-bottom: 1px solid #CCC; margin-bottom: 4px; }
+.sk-lines { flex: 1; padding: 0 4px; }
+.sk-tabs { display: flex; justify-content: space-around; border-top: 1px solid #1D1D1D; padding-top: 8px; }
+.sk-tabs i, .sk-rail i { width: 10px; height: 10px; border: 1px solid #555; background: none; border-radius: 2px; margin: 0; }
+.sk-tabs i.on, .sk-rail i.on { background: #1D1D1D; }
+.sk-tablet { width: 210px; height: 270px; }
+.sk-rail { width: 46px; border-right: 1px solid #1D1D1D; display: flex; flex-direction: column; align-items: center; gap: 14px; padding-top: 18px; }
+.sk-tablet .sk-lines { padding: 14px; }
+.sk-desktop, .sk-laptop { height: 230px; }
+.sk-side { width: 125px; border-right: 1px solid #1D1D1D; padding: 14px; position: relative; }
+.sk-side span { position: absolute; bottom: 14px; left: 14px; right: 30px; height: 12px; border-top: 4px solid #D5D5D5; border-bottom: 4px solid #D5D5D5; }
+.sk-desktop .sk-lines, .sk-laptop .sk-lines { padding: 14px; }
+.sk-panel { width: 150px; border-left: 1.5px dashed #888; padding: 14px; }
+.ptable { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+.ptable th, .ptable td { text-align: left; vertical-align: top; padding: 7px 14px 7px 0; border-bottom: 1px solid #E2E2E2; }
+.ptable thead th { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: #555; border-bottom: 1px solid #1D1D1D; }
+.ptable tbody th { width: 150px; }
+
+/* ---------------------------------------------------------------- screen boards */
+.frames { display: flex; gap: 40px; align-items: flex-start; }
+.frames figure { margin: 0; }
+.frames figcaption { font-size: 18px; color: #555; margin-top: 10px; }
+
+/* device shell */
+.dev { display: flex; background: var(--surface); color: var(--ink); font-family: var(--sans); font-size: 16px; line-height: 1.45; border: 2px solid #1D1D1D; border-radius: 22px; overflow: hidden; position: relative; }
+.dev-desktop { border-radius: 10px; }
+.wire .dev { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
+.dev .col { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.dev .body { flex: 1; padding: 28px 32px; overflow: hidden; }
+.dev-phone .body { padding: 22px 20px; }
+.dev-desktop .body { padding: 36px 48px; }
+.appbar { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; height: 60px; padding: 0 20px; border-bottom: 1px solid var(--rule); background: var(--shelf); font-size: 16px; }
+.appbar .r { text-align: right; }
+.appbar span { color: var(--primary); }
+.wire .appbar span { color: var(--ink); }
+.footer { padding: 14px 20px 18px; border-top: 1px solid var(--rule); }
+.footer .b-text { text-align: center; margin: 0 0 10px; }
+
+/* navigation */
+.nicon { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.5; flex: none; }
+.ni { color: var(--muted); }
+.ni.on { color: var(--ink); font-weight: 600; }
+.tabs { display: flex; justify-content: space-around; border-top: 1px solid var(--ink); padding: 10px 0 18px; background: var(--shelf); }
+.tabs .ni { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 13px; }
+.styled .tabs .ni.on { color: var(--primary); }
+.styled .tabs .ni.on .nicon { background: var(--tint); border-radius: 12px; padding: 2px 14px; width: 52px; }
+.rail { width: 88px; border-right: 1.5px solid var(--ink); display: flex; flex-direction: column; align-items: center; gap: 22px; padding-top: 22px; background: var(--shelf); }
+.rail .brand { font-weight: 700; margin-bottom: 10px; }
+.rail .ni { display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 12px; width: 100%; border-left: 3px solid transparent; padding: 2px 0; }
+.rail .ni.on { border-left-color: var(--ink); }
+.side { width: 248px; border-right: 1.5px solid var(--ink); padding: 26px 16px; display: flex; flex-direction: column; gap: 4px; background: var(--shelf); }
+.styled .side { border-right: 0; }
+.side .brand { font-size: 20px; font-weight: 700; margin: 0 10px 20px; font-family: var(--serif); }
+.wire .side .brand { font-family: inherit; }
+.side .ni { display: flex; align-items: center; gap: 12px; padding: 9px 12px; border-radius: 6px; color: var(--ink); }
+.side .ni.on { background: var(--tint); }
+.styled .side .ni.on { color: var(--primary); }
+.side .foot { margin-top: auto; border-top: 1px solid var(--rule); padding-top: 16px; font-size: 13px; color: var(--muted); }
+.side .foot .b { color: var(--ink); font-weight: 700; }
+.panel { width: 300px; border-left: 1px solid var(--rule); padding: 36px 28px; }
+.wire .panel { border-left: 1.5px solid var(--ink); }
+
+/* blocks */
+.b-eyebrow { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+.b-title { font-size: 34px; line-height: 1.15; margin: 0 0 10px; font-weight: 700; }
+.b-title.small { font-size: 24px; }
+.styled .b-title, .styled .b-heading h2, .styled .group, .styled .ruled-title { font-family: var(--serif); font-weight: 600; }
+.b-heading { display: flex; justify-content: space-between; align-items: baseline; margin: 26px 0 8px; }
+.b-heading h2 { font-size: 20px; margin: 0; }
+.b-heading .aside { font-weight: 400; color: var(--muted); }
+.b-text { margin: 0 0 14px; }
+.b-text.muted { color: var(--muted); }
+.b-text.small { font-size: 14px; }
+.link { text-decoration: underline; color: var(--primary); font-weight: 600; }
+.wire .link { font-weight: 400; color: var(--ink); }
+.b-button { margin: 16px 0; }
+.b-buttons { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.b-header { display: flex; justify-content: space-between; align-items: center; gap: 24px; margin-bottom: 20px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 20px; border-radius: 4px; font-weight: 700; font-size: 16px; border: 1.5px solid var(--ink); background: var(--surface); color: var(--ink); }
+.btn.primary { background: var(--primary); border-color: var(--primary); color: var(--primary-ink); }
+.btn.ghost { border-color: transparent; background: none; text-decoration: underline; color: var(--primary); }
+.btn.danger { border-color: var(--danger); color: var(--danger); font-weight: 600; }
+.btn.disabled { background: var(--tint); border-color: var(--tint); color: var(--muted); }
+.btn.focused { background: var(--primary); color: var(--primary-ink); border-color: var(--primary); box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--ink); }
+.btn.full { display: flex; width: 100%; min-height: 54px; font-size: 18px; }
+.ico { font-weight: 400; }
+
+.seg { position: relative; display: grid; grid-template-columns: repeat(var(--n), 1fr); gap: 6px; margin: 22px 0; }
+.seg .ticks { grid-column: 1 / -1; display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); }
+.seg.has-marker { padding-top: 24px; }
+.seg .marker { position: absolute; top: 0; height: 40px; border-left: 2px solid var(--ink); z-index: 1; }
+.seg .marker span { position: absolute; top: 0; left: 6px; line-height: 1; font-size: 11px; font-weight: 700; white-space: nowrap; background: var(--surface); }
+.bar { height: 10px; border-radius: 1px; }
+.bar.done { background: var(--ink); }
+.bar.current { background: var(--primary); }
+.wire .bar.current { background: var(--surface); border: 2px solid var(--ink); }
+.bar.progress { background: var(--surface); border: 1.5px solid var(--primary); }
+.wire .bar.progress { background: #CFCFCF; border: 0; }
+.bar.todo { background: var(--surface); border: 1px solid var(--rule); }
+.wire .bar.todo { background: #EDEDED; border: 0; }
+.seglabel { font-size: 15px; margin-top: 8px; }
+.segsub { font-size: 14px; color: var(--muted); }
+.segsub.strong { color: var(--primary); font-weight: 600; }
+.wire .segsub.strong { color: var(--ink); }
+
+.rows { margin: 4px 0 14px; }
+.row { display: flex; gap: 16px; padding: 9px 0; border-top: 1px solid var(--rule); }
+.row > span:first-child { flex: 1; }
+.row .num { min-width: 96px; text-align: right; }
+.row.strong { border-top: 2px solid var(--ink); font-weight: 700; }
+.row.muted { color: var(--muted); font-size: 14px; border-top: 0; padding-top: 2px; }
+.row.indent { padding-left: 16px; color: var(--muted); font-size: 14px; border-top: 0; padding-top: 3px; padding-bottom: 3px; }
+.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+.list .group { font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); padding: 22px 0 8px; border-bottom: 2px solid var(--ink); }
+.styled .list .group { text-transform: none; letter-spacing: 0; font-size: 20px; color: var(--ink); }
+.li { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--rule); min-height: 56px; }
+.li-title { font-size: 17px; }
+.li-meta { font-size: 14px; color: var(--muted); }
+.li-value { font-weight: 600; }
+.li-value.warn { background: var(--warning-bg); color: var(--warning); padding: 2px 10px; border-radius: 4px; }
+.wire .li-value.warn { border: 1px solid var(--ink); }
+
+.t { width: 100%; border-collapse: collapse; font-size: 15px; }
+.t th { text-align: left; font-weight: 600; color: var(--muted); font-size: 14px; padding: 8px 10px 8px 0; border-bottom: 2px solid var(--ink); }
+.t td { padding: 10px 10px 10px 0; border-bottom: 1px solid var(--rule); height: 44px; }
+.t .r { text-align: right; }
+.t tr.hl td { background: var(--tint); font-weight: 600; }
+.t tr.hl td:first-child { box-shadow: inset 3px 0 0 var(--ink); padding-left: 8px; }
+.t tr.grp td { font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); padding-top: 16px; }
+.t-foot { display: flex; justify-content: space-between; margin-top: 14px; font-size: 14px; color: var(--muted); }
+.t-foot span:last-child { text-decoration: underline; color: var(--primary); }
+
+.stepper { display: grid; grid-template-columns: repeat(var(--n), 1fr); gap: 8px; margin-bottom: 10px; }
+.stepper .st { border-top: 5px solid #DDD; padding-top: 6px; font-size: 14px; color: var(--muted); }
+.stepper .st.on { border-top-color: var(--primary); }
+.wire .stepper .st.on { border-top-color: var(--ink); }
+.stepper .st.on:last-of-type, .stepper .st.on + .st:not(.on) { }
+
+.choices { display: flex; flex-direction: column; gap: 14px; margin: 18px 0; }
+.choice { display: flex; gap: 16px; border: 1.5px solid var(--rule); border-radius: 8px; padding: 18px; }
+.choice.on { border: 2.5px solid var(--ink); }
+.choice b { font-size: 18px; }
+.radio { width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid var(--muted); flex: none; margin-top: 2px; }
+.choice.on .radio { border: 2px solid var(--ink); background: radial-gradient(var(--ink) 45%, transparent 50%); }
+.check { display: flex; gap: 16px; align-items: flex-start; margin: 22px 0; }
+.check.boxed { border: 1.5px solid var(--muted); border-radius: 8px; padding: 18px; }
+.box { width: 28px; height: 28px; border: 1.5px solid var(--muted); border-radius: 4px; flex: none; }
+.callout { border-left: 4px solid var(--ink); padding: 4px 0 4px 22px; margin: 22px 0; }
+.callout p { margin: 0 0 10px; }
+.chips { display: flex; gap: 10px; flex-wrap: wrap; margin: 14px 0; }
+.chip { border-radius: 20px; background: #EEE; padding: 6px 14px; font-size: 14px; }
+.chip.on { background: var(--surface); border: 1.5px solid var(--ink); }
+.styled .chip { background: none; padding-left: 0; color: var(--muted); }
+.styled .chip.on { background: var(--tint); border: 0; border-radius: 4px; padding-left: 14px; color: var(--primary); font-weight: 700; }
+.search { display: flex; gap: 12px; margin: 10px 0; }
+.input { display: flex; align-items: center; min-height: 48px; padding: 0 14px; border: 1.5px solid var(--muted); border-radius: 4px; flex: 1; color: var(--muted); background: var(--surface); }
+.input.select::after { content: '⌄'; margin-left: auto; }
+.filters { display: flex; gap: 12px; margin: 8px 0 14px; }
+.filters label { display: flex; flex-direction: column; gap: 4px; font-size: 14px; flex: 1; }
+.filters label:first-child { flex: 2; }
+.fields { display: flex; gap: 28px; }
+.field { display: flex; flex-direction: column; gap: 4px; margin: 10px 0; flex: 1; }
+.field .hint { font-size: 14px; color: var(--muted); }
+.field .input { color: var(--ink); max-width: 260px; }
+.field.error { border-left: 3px solid var(--danger); padding-left: 14px; }
+.field .err { color: var(--danger); font-weight: 600; font-size: 14px; }
+.field.error .input { border: 2px solid var(--danger); }
+.status { display: flex; gap: 22px; flex-wrap: wrap; align-items: center; font-size: 14px; margin: 18px 0; }
+.status span { display: inline-flex; align-items: center; gap: 7px; }
+.status i { width: 14px; height: 14px; border-radius: 50%; border: 1.5px solid var(--ink); display: inline-block; }
+.status .st-check i { background: var(--surface); }
+.status .st-check i::after { content: '✓'; font-size: 10px; display: block; text-align: center; line-height: 11px; }
+.status .st-dot { color: var(--primary); font-weight: 700; }
+.status .st-dot i { background: var(--primary); border-color: var(--primary); }
+.status .st-half i { background: linear-gradient(90deg, var(--ink) 50%, transparent 50%); }
+.status .st-dashed i { border-style: dashed; border-color: var(--muted); }
+.status .st-warn { background: var(--warning-bg); color: var(--warning); padding: 3px 10px; border-radius: 4px; font-weight: 600; }
+.status .st-warn i { border-radius: 0; border: 0; width: 0; height: 0; border-left: 7px solid transparent; border-right: 7px solid transparent; border-bottom: 12px solid var(--warning); }
+.checklist div { padding: 3px 0; }
+.success .tick { display: inline-flex; width: 76px; height: 76px; border: 2px solid var(--ink); border-radius: 50%; align-items: center; justify-content: center; font-size: 30px; margin-bottom: 18px; }
+.code { font: 18px/1.4 ui-monospace, Menlo, Consolas, monospace; margin: 4px 0 14px; word-break: break-all; }
+.divider { border: 0; border-top: 1px solid var(--rule); margin: 22px 0; }
+.b-cols { display: grid; grid-template-columns: repeat(var(--n), 1fr); gap: 48px; }
+.b-unknown { border: 2px dashed red; color: red; padding: 6px; }
+
+/* ---------------------------------------------------------------- visual system */
+.vis { color: var(--ink); }
+.vis .serif { font-family: var(--serif); font-weight: 600; }
+.vis .bh { border-bottom-color: var(--ink); }
+.vis h2 { font-size: 22px; margin: 0 0 10px; }
+.vis-grid h2:not(:first-child) { margin-top: 26px; }
+.vis-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; font-family: var(--sans); }
+.ctable { width: 100%; border-collapse: collapse; font-size: 12.5px; margin-bottom: 8px; }
+.ctable th { text-align: left; font-weight: 600; font-size: 11.5px; color: var(--muted); padding: 4px 6px; border-bottom: 1px solid var(--ink); }
+.ctable td { padding: 6px; border-bottom: 1px solid var(--rule); }
+.ctable .r { text-align: right; white-space: nowrap; }
+.ctable .fail { color: #B00020; font-weight: 700; }
+.sw { display: flex; align-items: center; justify-content: center; width: 34px; height: 20px; border-radius: 3px; border: 1px solid rgba(0,0,0,.08); }
+.sw i { width: 20px; height: 8px; display: block; }
+.rule-note { margin: 4px 0; }
+.tscale { margin-top: 4px; }
+.tscale .tr { display: grid; grid-template-columns: 130px 1fr; gap: 16px; align-items: center; padding: 5px 0; }
+.sig { margin-bottom: 18px; }
+.sig .seg { margin-top: 30px; }
+.comps { font-size: 15px; }
+.comps .b-buttons { margin-bottom: 12px; }
+.comps .btn { font-size: 14px; min-height: 38px; padding: 0 14px; }
+.comps .field .input { min-height: 38px; }
+.comps .t { font-size: 13px; }
+.comps .t td { height: 34px; padding: 6px 8px 6px 0; }
+.comps .status { margin: 10px 0; font-size: 13px; }
+.tokens { display: grid; grid-template-columns: 90px 1fr; gap: 4px 12px; font-size: 12px; margin: 16px 0 0; }
+.tokens dt { color: var(--muted); }
+.tokens dd { margin: 0; }
+
+</style>
+</head>
+<body>
+
+<section class="board" data-name="Information architecture" data-slug="information-architecture">
+  <header class="bh">
+    <div class="eyebrow">Bindery · Step 1 of 3 · Structure</div>
+    <div class="bh-row">
+      <div><h1>Information architecture</h1><p class="lede">Five sections, ordered by how often a bookseller needs them during a shift. These boards fix structure and behaviour only. Visual style comes in step 2.</p></div>
+      <div class="legend"><span><span class="mark" title="First release">1</span> First release</span><span><span class="mark next" title="Next release">2</span> Next release</span></div>
+    </div>
+  </header>
+  <div class="ia" style="--n: 5">
+    <div class="sec">
+      <code>/</code>
+      <h2>Today</h2>
+<p class="q">What needs doing before the shop closes?</p>      <div class="pg"><span class="mark" title="First release">1</span><div><b>Today</b><span>Next action, orders to collect, deliveries due, low stock</span></div></div>
+      <div class="pg"><span class="mark" title="First release">1</span><div><b>First-run setup</b><span>Same address. A four-step checklist until the shop can take orders</span></div></div>
+    </div>
+    <div class="sec">
+      <code>/orders</code>
+      <h2>Orders</h2>
+<p class="q">Books customers have asked for, from request to collection.</p>      <div class="pg"><span class="mark" title="First release">1</span><div><b>Order list</b><span>Filter by status, customer, supplier. Search</span></div></div>
+      <div class="pg"><span class="mark" title="First release">1</span><div><b>Order</b><code>/orders/:id</code><span>The order trail, customer, book, messages</span></div></div>
+      <div class="pg"><span class="mark" title="First release">1</span><div><b>New order</b><code>/orders/new</code></div></div>
+      <div class="pg"><span class="mark next" title="Next release">2</span><div><b>Message customers</b><code>/orders/ready/notify</code><span>One message to everyone whose book has arrived</span></div></div>
+    </div>
+    <div class="sec">
+      <code>/stock</code>
+      <h2>Stock</h2>
+<p class="q">What is on the shelves, and what needs reordering.</p>      <div class="pg"><span class="mark" title="First release">1</span><div><b>Stock list</b><span>Filter by section, supplier, low stock. Search by title or ISBN</span></div></div>
+      <div class="pg"><span class="mark" title="First release">1</span><div><b>Title</b><code>/stock/:isbn</code><span>Copies, location, sales, reorder level</span></div></div>
+      <div class="pg"><span class="mark" title="First release">1</span><div><b>Receive delivery</b><code>/stock/receive</code></div></div>
+      <div class="pg"><span class="mark next" title="Next release">2</span><div><b>Import invoice</b><code>/stock/import</code><span>Upload, match columns, review rows, confirm</span></div></div>
+    </div>
+    <div class="sec">
+      <code>/suppliers</code>
+      <h2>Suppliers</h2>
+<p class="q">Who you buy from, and what is on its way.</p>      <div class="pg"><span class="mark" title="First release">1</span><div><b>Suppliers</b><span>Active accounts, open orders, average lead time</span></div></div>
+      <div class="pg"><span class="mark" title="First release">1</span><div><b>Add supplier</b><code>/suppliers/new</code></div></div>
+      <div class="pg"><span class="mark next" title="Next release">2</span><div><b>Supplier</b><code>/suppliers/:id</code><span>Terms, contacts, order history</span></div></div>
+    </div>
+    <div class="sec">
+      <code>/settings</code>
+      <h2>Settings</h2>
+<p class="q">Your shop, your team, and your till.</p>      <div class="pg"><span class="mark" title="First release">1</span><div><b>Shop</b><code>/settings/shop</code><span>Name, opening hours, collection shelf</span></div></div>
+      <div class="pg"><span class="mark next" title="Next release">2</span><div><b>Team and roles</b><code>/settings/team</code><span>Invite staff, owner or bookseller</span></div></div>
+    </div>
+  </div>
+  <div class="journeys"><div class="label">Main journeys</div>
+    <div class="jr"><b>Fill an order</b><div class="steps">
+<span class="step">Today headline</span>
+<span class="arr">→</span><span class="step">Order</span>
+<span class="arr">→</span><span class="step">Check stock</span>
+<span class="arr">→</span><span class="step">Reserve a copy</span>
+<span class="arr">→</span><span class="step">Tell the customer</span>
+<span class="arr">→</span><span class="step end">Ready to collect</span>
+    </div></div>
+    <div class="jr"><b>Receive books</b><div class="steps">
+<span class="step">Stock</span>
+<span class="arr">→</span><span class="step">Receive delivery</span>
+<span class="arr">→</span><span class="step end">Back to stock, rows highlighted</span>
+<span class="or">or</span><span class="step next">Upload invoice</span>
+<span class="arr">→</span><span class="step next">Match columns</span>
+<span class="arr">→</span><span class="step next">Review rows</span>
+<span class="arr">→</span><span class="step next">Confirm</span>
+    </div></div>
+    <div class="jr"><b>First run</b><div class="steps">
+<span class="step">Name your shop</span>
+<span class="arr">→</span><span class="step">Add or import stock</span>
+<span class="arr">→</span><span class="step">Add a supplier</span>
+<span class="arr">→</span><span class="step end">Take a first order</span>
+    </div></div>
+  </div>
+  <div class="notes" style="--n: 3"><div><div class="label">Cross-links</div><p>An order opens its title in stock. A supplier opens its open orders, already filtered. The Today headline goes straight to the orders that need action.</p></div><div><div class="label">Outside the sections</div><p>Sign in. Customer-facing collection page (read only). Not found. Errors that name the supplier and what to try next.</p></div><div><div class="label">The API needs two additions</div><p>1. List orders across every status with paging. 2. Stock lookup by ISBN that returns the shelf location.</p></div></div>
+</section>
+
+<section class="board" data-name="Navigation by screen size" data-slug="navigation-by-screen-size">
+  <header class="bh">
+    <div class="eyebrow">How the same structure adapts</div>
+    <h1>Navigation by screen size</h1>
+<p class="lede">Four breakpoints chosen around the devices booksellers actually use: a phone at the shelves, an iPad on the counter, a laptop in the back office. Nothing is the desktop shrunk.</p>  </header>
+  <div class="devices">
+    <div class="devc devc-phone">
+      <div class="sketch sk-phone">
+<div class="sk-top"></div><div class="sk-lines"><i></i><i></i><i></i><i></i></div><div class="sk-tabs"><i class="on"></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i></div>
+      </div>
+      <h3>Phone · under 768</h3>
+      <p>Bottom tab bar, five labelled tabs, reachable with a thumb. Page title and one primary action in the header.</p>
+    </div>
+    <div class="devc devc-tablet">
+      <div class="sketch sk-tablet">
+<div class="sk-rail"><i class="on"></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i></div><div class="sk-lines"><b></b><i></i><i></i><i></i><i></i></div>
+      </div>
+      <h3>Tablet · 768 to 1199</h3>
+      <p>An 88 px rail, icon above label. Leaves the width for content on an iPad in portrait at the till.</p>
+    </div>
+    <div class="devc devc-desktop">
+      <div class="sketch sk-desktop">
+<div class="sk-side"><b></b><b></b><i></i><i></i><i></i><i></i><span></span></div><div class="sk-lines"><b></b><em></em><i></i><i></i><i></i><i></i></div><div class="sk-panel"><b></b><i></i><i></i></div>      </div>
+      <h3>Laptop 1200 to 1599 · Desktop 1600 and up</h3>
+      <p>A 248 px sidebar with labels; its foot shows the shop and who is signed in. Detail opens in a right panel (dashed). On desktop the panel stays open and content is capped at 1280 px.</p>
+    </div>
+  </div>
+  <table class="ptable"><thead><tr><th>Pattern</th><th>Phone</th><th>Tablet</th><th>Laptop and desktop</th></tr></thead><tbody>
+<tr><th>Page actions</th><td>One primary action in the header; the rest in a More menu</td><td>Primary and one secondary action in the header</td><td>All actions in the header, primary rightmost</td></tr><tr><th>Stock and order tables</th><td>A list grouped by status or section; copies on the right</td><td>Four columns; supplier and location move to a second line</td><td>Full table with separate In stock and On order columns</td></tr><tr><th>Filters</th><td>Filters button opens a bottom sheet; active filters show as removable chips</td><td>Filters button opens a popover; chips below the search</td><td>Inline filter bar; every choice visible</td></tr><tr><th>Detail and edit</th><td>Full screen with a back button</td><td>Side sheet over the list</td><td>Right panel beside the table, which keeps its scroll position</td></tr><tr><th>Forms</th><td>One column, full width, action bar fixed to the bottom</td><td>One column, at most 560 px wide</td><td>One column, at most 560 px, in the panel or a page</td></tr><tr><th>Multi-step tasks</th><td>Full-screen task; tabs hidden; Exit at top left</td><td colspan="2">A centred 640 px column with a step indicator; navigation hidden behind an Exit link so the task has the screen</td></tr>  </tbody></table>
+</section>
+
+<section class="board" data-name="Today, phone and tablet" data-slug="today-phone-and-tablet">
+  <header class="bh">
+    <div class="eyebrow">Step 1 · Wireframes · <code>/</code></div>
+    <h1>Today, phone and tablet</h1>
+<p class="lede">One headline action, then the order trail, then what changed. The tablet keeps the same order and gains a little room.</p>  </header>
+  <div class="frames wire" style="--ink: #1F1F1F; --muted: #6B6B6B; --primary: #1F1F1F; --primary-ink: #FFFFFF; --tint: #EFEFEF; --surface: #FFFFFF; --shelf: #FFFFFF; --rule: #DADADA; --danger: #1F1F1F; --warning: #1F1F1F; --warning-bg: #EFEFEF;  zoom: 0.5915">
+    <figure><div class="dev dev-phone" style="width: 390px; height: 844px">
+  <div class="col">
+<div class="appbar"><span>Bindery</span><b></b><span class="r">Thu 8 Oct</span></div>    <main class="body"><div class="b-eyebrow">Next step</div>
+<h1 class="b-title">3 orders are ready to collect</h1>
+<p class="b-text">Arrived this morning. The oldest has waited 2 days.</p>
+<div class="b-button"><span class="btn primary full">Tell the customers</span>
+</div>
+<hr class="divider">
+<div class="seg" style="--n: 4">
+  <div class="segcell">
+    <div class="bar done"></div>
+    <div class="seglabel"><b>Requested</b></div>
+<div class="segsub">6 Oct</div>  </div>
+  <div class="segcell">
+    <div class="bar done"></div>
+    <div class="seglabel"><b>Ordered</b></div>
+<div class="segsub">6 Oct</div>  </div>
+  <div class="segcell">
+    <div class="bar current"></div>
+    <div class="seglabel"><b>Arrived</b></div>
+<div class="segsub strong">Today</div>  </div>
+  <div class="segcell">
+    <div class="bar todo"></div>
+    <div class="seglabel"><b>Collected</b></div>
+<div class="segsub">Not yet</div>  </div>
+</div>
+
+<div class="b-heading"><h2>This week</h2></div>
+<div class="rows">  <div class="row"><span>Orders taken</span><span class="num">14</span></div>
+  <div class="row"><span>Copies sold</span><span class="num">212</span></div>
+  <div class="row strong"><span>Below reorder level</span><span class="num">9</span></div>
+</div>
+<div class="b-heading"><h2>Recent</h2><span class="link">All orders</span></div>
+<div class="list"><div class="li"><div><div class="li-title">The Overstory</div><div class="li-meta">A. Reyes · arrived today</div></div><div class="num li-value">Ready</div></div><div class="li"><div><div class="li-title">Piranesi</div><div class="li-meta">M. Okafor · ordered 6 Oct</div></div><div class="num li-value">Ordered</div></div></div>
+</main>
+<nav class="tabs"><div class="ni on"><svg class="nicon" viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="3"/></svg><span>Today</span></div><div class="ni"><svg class="nicon" viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="3"/></svg><span>Orders</span></div><div class="ni"><svg class="nicon" viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="3"/></svg><span>Stock</span></div><div class="ni"><svg class="nicon" viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="3"/></svg><span>Suppliers</span></div><div class="ni"><svg class="nicon" viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="3"/></svg><span>Settings</span></div></nav>  </div>
+</div>
+</figure>
+    <figure><div class="dev dev-tablet" style="width: 820px; height: 1180px">
+  <nav class="rail"><div class="brand">Bd</div><div class="ni on"><svg class="nicon" viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="3"/></svg><span>Today</span></div><div class="ni"><svg class="nicon" viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="3"/></svg><span>Orders</span></div><div class="ni"><svg class="nicon" viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="3"/></svg><span>Stock</span></div><div class="ni"><svg class="nicon" viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="3"/></svg><span>Suppliers</span></div><div class="ni"><svg class="nicon" viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="3"/></svg><span>Settings</span></div></nav>
+  <div class="col">
+    <main class="body"><div class="b-header"><div><div class="b-eyebrow">Next step</div><h1 class="b-title">3 orders are ready to collect</h1><p class="b-text">Arrived this morning. The oldest has waited 2 days.</p></div>
+<div class="b-buttons"><span class="btn primary">Tell the customers</span>
+</div></div>
+<hr class="divider">
+<div class="seg" style="--n: 4">
+  <div class="segcell">
+    <div class="bar done"></div>
+    <div class="seglabel"><b>Requested</b> 6 Oct</div>
+<div class="segsub">Done</div>  </div>
+  <div class="segcell">
+    <div class="bar done"></div>
+    <div class="seglabel"><b>Ordered</b> 6 Oct</div>
+<div class="segsub">Done</div>  </div>
+  <div class="segcell">
+    <div class="bar current"></div>
+    <div class="seglabel"><b>Arrived</b> Today</div>
+<div class="segsub strong">Ready to collect</div>  </div>
+  <div class="segcell">
+    <div class="bar todo"></div>
+    <div class="seglabel"><b>Collected</b></div>
+<div class="segsub">Not yet</div>  </div>
+</div>
+
+<div class="b-heading"><h2>This week</h2></div>
+<div class="rows">  <div class="row"><span>Orders taken</span><span class="num">Mon to Wed 9</span><span class="num">Thu 5</span><span class="num">14</span></div>
+  <div class="row"><span>Copies sold</span><span class="num">148</span><span class="num">64</span><span class="num">212</span></div>
+  <div class="row strong"><span>Below reorder level</span><span class="num"></span><span class="num"></span><span class="num">9</span></div>
+</div>
+<div class="b-heading"><h2>Recent orders</h2><span class="link">All orders</span></div>
+<div class="list"><div class="li"><div><div class="li-title">The Overstory</div><div class="li-meta">A. Reyes · Fiction · arrived today</div></div><div class="num li-value">Ready</div></div><div class="li"><div><div class="li-title">Piranesi</div><div class="li-meta">M. Okafor · Fiction · ordered 6 Oct</div></div><div class="num li-value">Ordered</div></div><div class="li"><div><div class="li-title">Braiding Sweetgrass</div><div class="li-meta">L. Chen · Nature · requested 7 Oct</div></div><div class="num li-value">Requested</div></div></div>
+</main>
+  </div>
+</div>
+</figure>
+  </div>
+</section>
+<section class="board" data-name="Stock, laptop" data-slug="stock-laptop">
+  <header class="bh">
+    <div class="eyebrow">Step 1 · Wireframes · <code>/stock</code></div>
+    <h1>Stock, laptop</h1>
+<p class="lede">Filters always visible, a full table, and detail in the right panel so the table keeps its scroll position.</p>  </header>
+  <div class="frames wire" style="--ink: #1F1F1F; --muted: #6B6B6B; --primary: #1F1F1F; --primary-ink: #FFFFFF; --tint: #EFEFEF; --surface: #FFFFFF; --shelf: #FFFFFF; --rule: #DADADA; --danger: #1F1F1F; --warning: #1F1F1F; --warning-bg: #EFEFEF;  zoom: 0.7756">
+    <figure><div class="dev dev-desktop" style="width: 1440px; height: 900px">
+  <nav class="side"><div class="brand">Bindery</div><div class="ni"><svg class="nicon" viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="3"/></svg><span>Today</span></div><div class="ni"><svg class="nicon" viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="3"/></svg><span>Orders</span></div><div class="ni on"><svg class="nicon" viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="3"/></svg><span>Stock</span></div><div class="ni"><svg class="nicon" viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="3"/></svg><span>Suppliers</span></div><div class="ni"><svg class="nicon" viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="3"/></svg><span>Settings</span></div>    <div class="foot"><div class="b">Marlow Lane Books</div><div class="">Open until 6pm</div><div class="">Sam (owner)</div></div></nav>
+  <div class="col">
+    <main class="body"><div class="b-header"><div><h1 class="b-title small">Stock</h1></div>
+<div class="b-buttons"><span class="btn secondary">Import invoice</span>
+<span class="btn primary">+ Receive delivery</span>
+</div></div>
+<div class="filters"><label><span>Search</span><span class="input">Title</span></label><label><span>Section</span><span class="input select">All</span></label><label><span>Supplier</span><span class="input select">All</span></label><label><span>Show</span><span class="input select">Below reorder level</span></label></div>
+<p class="b-text small">9 titles below their reorder level. 31 copies on order.</p>
+<table class="t"><thead><tr><th class="">Title</th><th class="">Section</th><th class="">Supplier</th><th class="r">In stock</th><th class="r">On order</th></tr></thead><tbody>
+<tr class="hl"><td class="">The Overstory</td><td class="">Fiction</td><td class="">Northbook</td><td class="r num">0</td><td class="r num">2</td></tr><tr class=""><td class="">Piranesi</td><td class="">Fiction</td><td class="">Northbook</td><td class="r num">1</td><td class="r num">3</td></tr><tr class=""><td class="">Braiding Sweetgrass</td><td class="">Nature</td><td class="">Riverside</td><td class="r num">1</td><td class="r num">4</td></tr><tr class=""><td class="">The Wild Silence</td><td class="">Nature</td><td class="">Riverside</td><td class="r num">0</td><td class="r num">2</td></tr><tr class=""><td class="">A Little Life</td><td class="">Fiction</td><td class="">Northbook</td><td class="r num">2</td><td class="r num">0</td></tr><tr class=""><td class="">Entangled Life</td><td class="">Science</td><td class="">Riverside</td><td class="r num">1</td><td class="r num">5</td></tr></tbody></table>
+<div class="t-foot"><span>Showing 1 to 6 of 9</span><span>Next page</span></div></main>
+  </div>
+<aside class="panel"><div class="b-eyebrow">Fiction · ISBN 978…5442</div>
+<h1 class="b-title small">The Overstory</h1>
+<div class="rows">  <div class="row"><span>In stock</span><span class="num">0</span></div>
+  <div class="row"><span>On order</span><span class="num">2 from Northbook</span></div>
+  <div class="row"><span>Reorder level</span><span class="num">2</span></div>
+  <div class="row"><span>Sold this month</span><span class="num">7</span></div>
+  <div class="row"><span>Shelf</span><span class="num">F, bay 3</span></div>
+</div>
+<p class="b-text muted small">One copy is reserved for A. Reyes and will not show as available.</p>
+<div class="b-buttons"><span class="btn primary">Reorder</span>
+<span class="btn secondary">Edit</span>
+</div>
+</aside></div>
+</figure>
+  </div>
+</section>
+<section class="board" data-name="Fill an order, phone" data-slug="fill-an-order-phone">
+  <header class="bh">
+    <div class="eyebrow">Step 1 · Wireframes · <code>/orders/1042/fill</code></div>
+    <h1>Fill an order, phone</h1>
+<p class="lede">A full-screen task with the tabs hidden. Three steps, one decision each, and nothing is sent until the last.</p>  </header>
+  <div class="frames wire" style="--ink: #1F1F1F; --muted: #6B6B6B; --primary: #1F1F1F; --primary-ink: #FFFFFF; --tint: #EFEFEF; --surface: #FFFFFF; --shelf: #FFFFFF; --rule: #DADADA; --danger: #1F1F1F; --warning: #1F1F1F; --warning-bg: #EFEFEF;  zoom: 0.827">
+    <figure><div class="dev dev-phone" style="width: 390px; height: 844px">
+  <div class="col">
+<div class="appbar"><span></span><b>Fill order 1042</b><span class="r">Exit ✕</span></div>    <main class="body"><div class="stepper" style="--n: 3"><div class="st on"></div><div class="st"></div><div class="st"></div></div>
+<div class="b-text muted small">Step 1 of 3</div><h1 class="b-title small">Check the copy</h1>
+<p class="b-text">The Overstory, paperback. One copy arrived today from Northbook.</p>
+<div class="rows">  <div class="row"><span>Customer</span><span class="num">A. Reyes</span></div>
+  <div class="row"><span>Paid</span><span class="num">Deposit £5.00</span></div>
+  <div class="row"><span>Shelf</span><span class="num">Collection, C2</span></div>
+</div>
+<div class="callout"><p>If this is the wrong edition, reorder before you reserve it.</p><span class="link">Reorder</span></div>
+</main>
+<div class="footer"><div class="b-button"><span class="btn primary full">This is the right copy</span>
+</div>
+</div>  </div>
+</div>
+</figure>
+    <figure><div class="dev dev-phone" style="width: 390px; height: 844px">
+  <div class="col">
+<div class="appbar"><span>‹ Back</span><b>Fill order 1042</b><span class="r">Exit</span></div>    <main class="body"><div class="stepper" style="--n: 3"><div class="st on"></div><div class="st on"></div><div class="st"></div></div>
+<div class="b-text muted small">Step 2 of 3</div><h1 class="b-title small">How should we tell them?</h1>
+<p class="b-text">A. Reyes asked to hear by text.</p>
+<div class="choices"><div class="choice on"><span class="radio"></span><div><b>Text message</b><div>To 07•••• •••482</div><div class="muted small">Their choice</div></div></div><div class="choice"><span class="radio"></span><div><b>Email</b><div>a•••@example.com</div></div></div><div class="choice"><span class="radio"></span><div><b>Don&#39;t send</b><div>Mark ready without a message</div></div></div></div>
+</main>
+<div class="footer"><div class="b-button"><span class="btn primary full">Continue</span>
+</div>
+</div>  </div>
+</div>
+</figure>
+    <figure><div class="dev dev-phone" style="width: 390px; height: 844px">
+  <div class="col">
+<div class="appbar"><span>‹ Back</span><b>Fill order 1042</b><span class="r">Exit</span></div>    <main class="body"><div class="stepper" style="--n: 3"><div class="st on"></div><div class="st on"></div><div class="st on"></div></div>
+<div class="b-text muted small">Step 3 of 3</div><h1 class="b-title small">Confirm and send</h1>
+<div class="rows">  <div class="row"><span>Book</span><span class="num">The Overstory</span></div>
+  <div class="row"><span>Customer</span><span class="num">A. Reyes</span></div>
+  <div class="row"><span>Message</span><span class="num">Text</span></div>
+  <div class="row"><span>Hold until</span><span class="num">15 Oct</span></div>
+</div>
+<div class="check"><span class="box"></span><span>The copy is on the collection shelf.</span></div>
+</main>
+<div class="footer"><p class="b-text muted small">Tick the box to send.</p>
+<div class="b-button"><span class="btn disabled full">Send and mark ready</span>
+</div>
+</div>  </div>
+</div>
+</figure>
+  </div>
+</section>
+
+<section class="board vis" data-name="Visual system" data-slug="visual-system" style="--ink: #1E2230; --muted: #565C6E; --primary: #2F3E8F; --primary-ink: #FFFFFF; --tint: #E6E9F5; --surface: #FFFFFF; --shelf: #F5F4EF; --rule: #D8DAE0; --danger: #A1262B; --warning: #8A4B00; --warning-bg: #EFEFEF; ">
+  <header class="bh">
+    <div class="eyebrow">Bindery · Step 2 of 3 · Visual system</div>
+    <div class="bh-row">
+      <div><h1 class="serif">Bindery visual system</h1><p class="lede">Warm paper, ruled lists instead of cards, one indigo for actions, and every order drawn as a trail.</p></div>
+<p class="legend small">Every text colour passes WCAG AA on white (checked by the generator). Status is always carried by words and shape as well as colour.</p>    </div>
+  </header>
+  <div class="vis-grid">
+    <div>
+      <h2 class="serif">Colour</h2>
+      <table class="ctable"><thead><tr><th></th><th>Token</th><th>Used for</th><th class="r">On white</th></tr></thead><tbody>
+<tr><td><span class="sw" style="background: #1E2230"></span></td>
+        <td><b>Ink</b> #1E2230</td><td>Text, totals rule, finished steps</td><td class="r">15.8 : 1</td></tr><tr><td><span class="sw" style="background: #565C6E"></span></td>
+        <td><b>Muted</b> #565C6E</td><td>Secondary text, captions</td><td class="r">6.7 : 1</td></tr><tr><td><span class="sw" style="background: #2F3E8F"></span></td>
+        <td><b>Indigo</b> #2F3E8F</td><td>Primary actions, links, current step</td><td class="r">9.5 : 1</td></tr><tr><td><span class="sw" style="background: #E6E9F5"></span></td>
+        <td><b>Indigo tint</b> #E6E9F5</td><td>Selected row, current nav item</td><td class="r">fill only</td></tr><tr><td><span class="sw" style="background: #F5F4EF"></span></td>
+        <td><b>Paper</b> #F5F4EF</td><td>Navigation, sheets behind content</td><td class="r">fill only</td></tr><tr><td><span class="sw" style="background: #D8DAE0"></span></td>
+        <td><b>Rule</b> #D8DAE0</td><td>Row dividers; input borders use Muted</td><td class="r">line only</td></tr><tr><td><span class="sw" style="background: #8A4B00"></span></td>
+        <td><b>Amber</b> #8A4B00</td><td>Low stock, waiting too long</td><td class="r">6.8 : 1</td></tr><tr><td><span class="sw" style="background: #A1262B"></span></td>
+        <td><b>Red</b> #A1262B</td><td>Errors and destructive actions only</td><td class="r">7.4 : 1</td></tr>      </tbody></table>
+<p class="small muted rule-note">Stock levels are never green and red. Low stock is a word (&#34;Low&#34;) and an amber tag, never colour alone.</p>      <h2 class="serif">Type</h2>
+      <div class="tscale">        <div class="tr"><div class="small muted">Page title<br>Serif, 32/38, 600</div>
+        <div style="font-family: var(--serif); font-size: 32px; line-height: 38px; font-weight: 600;">3 orders are ready to collect</div></div>
+        <div class="tr"><div class="small muted">Section<br>Serif, 22/28, 600</div>
+        <div style="font-family: var(--serif); font-size: 22px; line-height: 28px; font-weight: 600;">This week</div></div>
+        <div class="tr"><div class="small muted">Key figure<br>Sans, 34/40, 600</div>
+        <div style="font-family: var(--sans); font-size: 34px; line-height: 40px; font-weight: 600; font-variant-numeric: tabular-nums;">212</div></div>
+        <div class="tr"><div class="small muted">Label<br>Sans, 16/24, 600</div>
+        <div style="font-family: var(--sans); font-size: 16px; line-height: 24px; font-weight: 600;">Reorder level</div></div>
+        <div class="tr"><div class="small muted">Body and tables<br>Sans, 16/24, 400</div>
+        <div style="font-family: var(--sans); font-size: 16px; line-height: 24px; font-weight: 400;">Bindery reminds you when a reserved book has waited a week.</div></div>
+        <div class="tr"><div class="small muted">Caption<br>Sans, 14/20, 400</div>
+        <div style="font-family: var(--sans); font-size: 14px; line-height: 20px; font-weight: 400; color: var(--muted);">Fiction, bay 3. 2 on order.</div></div>
+</div>
+    </div>
+    <div>
+      <h2 class="serif">The order trail</h2>
+<p class="small muted">The one signature element. It appears on Today and on every order, full width on laptop and as a compact strip on phone.</p>      <div class="sig"><div class="seg has-marker" style="--n: 4">
+<div class="marker" style="left: 54%"><span>Now, 8 Oct</span></div>  <div class="segcell">
+    <div class="bar done"></div>
+    <div class="seglabel"><b>Requested</b></div>
+<div class="segsub">6 Oct</div>  </div>
+  <div class="segcell">
+    <div class="bar done"></div>
+    <div class="seglabel"><b>Ordered</b></div>
+<div class="segsub">6 Oct, Northbook</div>  </div>
+  <div class="segcell">
+    <div class="bar current"></div>
+    <div class="seglabel"><b>Arrived</b></div>
+<div class="segsub strong">Ready to collect</div>  </div>
+  <div class="segcell">
+    <div class="bar progress"></div>
+    <div class="seglabel"><b>Collected</b></div>
+<div class="segsub">Not yet</div>  </div>
+</div>
+</div>
+      <h2 class="serif">Components</h2>
+      <div class="comps"><div class="b-buttons"><span class="btn primary">Tell the customers</span>
+<span class="btn secondary">Import invoice</span>
+<span class="btn ghost">Cancel</span>
+<span class="btn danger">Delete order</span>
+<span class="btn disabled">Send</span>
+</div>
+<div class="b-buttons"><span class="btn focused">Focused</span>
+</div>
+<div class="fields"><div class="field"><b>Copies received</b><div class="hint">Count every copy in the box</div><span class="input">4</span></div>
+<div class="field error"><b>ISBN</b><div class="err">Enter 13 digits, like 978 0 00 000000 0</div><span class="input">97800</span></div>
+</div>
+<div class="status"><span class="st-check"><i></i>Collected</span><span class="st-dot"><i></i>Ready</span><span class="st-half"><i></i>Ordered</span><span class="st-dashed"><i></i>Requested</span><span class="st-warn"><i></i>Waited 5 days</span></div>
+<table class="t"><thead><tr><th class="">Date</th><th class="">Title</th><th class="">Customer</th><th class="r">Status</th></tr></thead><tbody>
+<tr class="hl"><td class="">8 Oct</td><td class="">The Overstory</td><td class="">A. Reyes</td><td class="r num">Ready</td></tr><tr class=""><td class="">7 Oct</td><td class="">Braiding Sweetgrass</td><td class="">L. Chen</td><td class="r num">Ordered</td></tr></tbody></table>
+</div>
+      <dl class="tokens"><dt>Spacing</dt><dd>4, 8, 12, 16, 24, 32, 48, 64 px</dd><dt>Corners</dt><dd>4 px controls, 8 px sheets and dialogs, nothing rounder</dd><dt>Elevation</dt><dd>None on the page. One shadow, only for sheets, menus and dialogs</dd><dt>Targets</dt><dd>44 px minimum; table rows 44 px on laptop, list rows 56 px on phone</dd></dl>
+    </div>
+  </div>
+</section>
+
+<section class="board" data-name="Today, laptop" data-slug="today-laptop">
+  <header class="bh">
+    <div class="eyebrow">Step 3 · Screens in the visual system · <code>/</code></div>
+    <h1>Today, laptop</h1>
+<p class="lede">The same structure as the wireframe, now with the indigo action colour, serif headings and the order trail.</p>  </header>
+  <div class="frames styled" style="--ink: #1E2230; --muted: #565C6E; --primary: #2F3E8F; --primary-ink: #FFFFFF; --tint: #E6E9F5; --surface: #FFFFFF; --shelf: #F5F4EF; --rule: #D8DAE0; --danger: #A1262B; --warning: #8A4B00; --warning-bg: #EFEFEF;  zoom: 0.7756">
+    <figure><div class="dev dev-desktop" style="width: 1440px; height: 900px">
+  <nav class="side"><div class="brand">Bindery</div><div class="ni on"><svg class="nicon" viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="3"/></svg><span>Today</span></div><div class="ni"><svg class="nicon" viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="3"/></svg><span>Orders</span></div><div class="ni"><svg class="nicon" viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="3"/></svg><span>Stock</span></div><div class="ni"><svg class="nicon" viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="3"/></svg><span>Suppliers</span></div><div class="ni"><svg class="nicon" viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="3"/></svg><span>Settings</span></div>    <div class="foot"><div class="b">Marlow Lane Books</div><div class="">Open until 6pm</div><div class="">Sam (owner)</div></div></nav>
+  <div class="col">
+    <main class="body"><div class="b-header"><div><h1 class="b-title">3 orders are ready to collect</h1><p class="b-text">Arrived this morning from Northbook. The oldest has waited 2 days.</p></div>
+<div class="b-buttons"><span class="btn primary">Tell the customers</span>
+</div></div>
+<div class="seg" style="--n: 4">
+  <div class="segcell">
+    <div class="bar done"></div>
+    <div class="seglabel"><b>Requested</b></div>
+<div class="segsub">6 Oct</div>  </div>
+  <div class="segcell">
+    <div class="bar done"></div>
+    <div class="seglabel"><b>Ordered</b></div>
+<div class="segsub">6 Oct</div>  </div>
+  <div class="segcell">
+    <div class="bar current"></div>
+    <div class="seglabel"><b>Arrived</b></div>
+<div class="segsub strong">Today, 3 orders</div>  </div>
+  <div class="segcell">
+    <div class="bar todo"></div>
+    <div class="seglabel"><b>Collected</b></div>
+<div class="segsub">Not yet</div>  </div>
+</div>
+
+<div class="b-cols" style="--n: 2"><div><div class="b-heading"><h2>This week</h2></div>
+<div class="rows">  <div class="row"><span>Orders taken</span><span class="num">14</span></div>
+  <div class="row"><span>Copies sold</span><span class="num">212</span></div>
+  <div class="row strong"><span>Below reorder level</span><span class="num">9</span></div>
+</div>
+<p class="b-text muted small">Week starts Monday. Sales include the online shop.</p>
+</div><div><div class="b-heading"><h2>Recent orders</h2><span class="link">All orders</span></div>
+<table class="t"><thead><tr><th class="">Date</th><th class="">Title</th><th class="">Customer</th><th class="r">Status</th></tr></thead><tbody>
+<tr class=""><td class="">8 Oct</td><td class="">The Overstory</td><td class="">A. Reyes</td><td class="r num">Ready</td></tr><tr class=""><td class="">8 Oct</td><td class="">Piranesi</td><td class="">M. Okafor</td><td class="r num">Ready</td></tr><tr class=""><td class="">7 Oct</td><td class="">Braiding Sweetgrass</td><td class="">L. Chen</td><td class="r num">Ordered</td></tr><tr class=""><td class="">6 Oct</td><td class="">Entangled Life</td><td class="">P. Novak</td><td class="r num">Ordered</td></tr></tbody></table>
+</div></div>
+</main>
+  </div>
+<aside class="panel"><div class="b-heading"><h2>Deliveries due</h2></div>
+<div class="rows">  <div class="row"><span>Northbook</span><span class="num">Today</span></div>
+  <div class="row"><span>Riverside</span><span class="num">Mon 12 Oct</span></div>
+</div>
+<div class="b-buttons"><span class="btn secondary">Receive delivery</span>
+</div>
+<div class="b-heading"><h2>Shop</h2></div>
+<div class="rows">  <div class="row"><span>Open</span><span class="num">Until 6pm</span></div>
+  <div class="row"><span>Collection shelf</span><span class="num">C, 11 waiting</span></div>
+</div>
+</aside></div>
+</figure>
+  </div>
+</section>
+<section class="board" data-name="Stock and confirm, phone" data-slug="stock-and-confirm-phone">
+  <header class="bh">
+    <div class="eyebrow">Step 3 · Screens in the visual system · <code>/stock · /orders/:id/fill</code></div>
+    <h1>Stock and confirm, phone</h1>
+<p class="lede">Lists group by section under serif headings. The final step of a task always restates what will happen before anything is sent.</p>  </header>
+  <div class="frames styled" style="--ink: #1E2230; --muted: #565C6E; --primary: #2F3E8F; --primary-ink: #FFFFFF; --tint: #E6E9F5; --surface: #FFFFFF; --shelf: #F5F4EF; --rule: #D8DAE0; --danger: #A1262B; --warning: #8A4B00; --warning-bg: #EFEFEF;  zoom: 0.827">
+    <figure><div class="dev dev-phone" style="width: 390px; height: 844px">
+  <div class="col">
+    <main class="body"><div class="b-header"><div><h1 class="b-title small">Stock</h1></div>
+<div class="b-buttons"><span class="btn primary">+ Receive</span>
+</div></div>
+<div class="search"><span class="input">⌕ Search</span><span class="btn secondary">Filters</span></div>
+<div class="chips"><span class="chip">Below reorder level</span><span class="chip on">Fiction ×</span></div>
+<p class="b-text small">5 titles. 7 copies on order.</p>
+<div class="list"><div class="group">Fiction</div>
+<div class="li"><div><div class="li-title">The Overstory</div><div class="li-meta">0 in stock, 2 on order</div></div><div class="num li-value warn">Low</div></div><div class="li"><div><div class="li-title">Piranesi</div><div class="li-meta">1 in stock, 3 on order</div></div><div class="num li-value warn">Low</div></div><div class="li"><div><div class="li-title">A Little Life</div><div class="li-meta">2 in stock</div></div><div class="num li-value">2</div></div><div class="group">Translated fiction</div>
+<div class="li"><div><div class="li-title">The Employees</div><div class="li-meta">0 in stock, 2 on order</div></div><div class="num li-value warn">Low</div></div></div>
+</main>
+<nav class="tabs"><div class="ni"><svg class="nicon" viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="3"/></svg><span>Today</span></div><div class="ni"><svg class="nicon" viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="3"/></svg><span>Orders</span></div><div class="ni on"><svg class="nicon" viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="3"/></svg><span>Stock</span></div><div class="ni"><svg class="nicon" viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="3"/></svg><span>Suppliers</span></div><div class="ni"><svg class="nicon" viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="3"/></svg><span>Settings</span></div></nav>  </div>
+</div>
+</figure>
+    <figure><div class="dev dev-phone" style="width: 390px; height: 844px">
+  <div class="col">
+<div class="appbar"><span>‹ Back</span><b>Fill order 1042</b><span class="r">Exit</span></div>    <main class="body"><div class="stepper" style="--n: 3"><div class="st on"><span>Check</span></div><div class="st on"><span>Message</span></div><div class="st on"><span>Send</span></div></div>
+<h1 class="b-title small">Confirm and send</h1>
+<p class="b-text">This is what A. Reyes will receive.</p>
+<div class="rows">  <div class="row"><span>Book</span><span class="num">The Overstory</span></div>
+  <div class="row"><span>Message</span><span class="num">Text to 07•••• •••482</span></div>
+  <div class="row"><span>Hold until</span><span class="num">15 Oct</span></div>
+</div>
+<div class="check boxed"><span class="box"></span><span>The copy is on the collection shelf.</span></div>
+<p class="b-text muted small">If they do not collect by 15 Oct, Bindery reminds you, not them.</p>
+</main>
+<div class="footer"><p class="b-text muted small">Tick the box to send.</p>
+<div class="b-button"><span class="btn disabled full">Send and mark ready</span>
+</div>
+</div>  </div>
+</div>
+</figure>
+  </div>
+</section>
+
+</body>
+</html>

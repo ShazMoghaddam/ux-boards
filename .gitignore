@@ -1,0 +1,6 @@
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+# your own specs live here; remove this line if you want to commit them
+projects/

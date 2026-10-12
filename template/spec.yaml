@@ -1,0 +1,243 @@
+# ux-boards starter spec
+# ---------------------------------------------------------------------------
+# Replace every value that starts with TODO. `generate.py check` lists the ones
+# you have missed, and `--strict` refuses to build until they are all gone.
+# Delete any board you do not need: only project and ia are required.
+# Full block reference: docs/SPEC.md. Worked example: examples/bindery/spec.yaml
+# ---------------------------------------------------------------------------
+
+project:
+  name: TODO Product name
+  short: TODO          # two letters for the tablet rail, e.g. "Bd"
+  tagline: TODO One line on who it is for and what it does
+
+release_labels:
+  1: First release
+  2: Next release
+
+# ================================================================ Step 1: structure
+ia:
+  # Say how the sections are ordered and why. Frequency of use is a good default.
+  intro: >-
+    TODO Five sections, ordered by how often a <user> needs them.
+    These boards fix structure and behaviour only. Visual style comes in step 2.
+  sections:
+    # One entry per top-level navigation item. Five is a comfortable phone tab bar.
+    - route: /
+      name: TODO Home section
+      question: TODO The question this section answers, in the user's words
+      pages:
+        - name: TODO Main page
+          note: TODO What it shows, most important first
+        - name: First-run setup
+          note: TODO Same address. A checklist until the account is usable
+    - route: /TODO-records
+      name: TODO Records section
+      question: TODO Record and check the core objects
+      pages:
+        - name: TODO List
+          note: TODO Filters and search
+        - name: TODO Detail
+          route: /TODO-records/:id
+          note: TODO View, edit, delete
+        - name: TODO Add
+          route: /TODO-records/new
+        - name: TODO Bulk import
+          route: /TODO-records/import
+          release: 2
+          note: TODO Upload, match columns, review rows, confirm
+    - route: /TODO-task
+      name: TODO Task section
+      question: TODO The job the product exists to get done
+      pages:
+        - name: TODO Overview of the task
+        - name: TODO Review and submit
+          route: /TODO-task/:id/submit
+        - name: TODO Receipt or result
+          route: /TODO-task/results/:id
+    - route: /settings
+      name: Settings
+      question: TODO Who you are to the product, and to anything it connects to
+      pages:
+        - name: TODO Connection or account
+          route: /settings/TODO
+        - name: Profile and preferences
+          release: 2
+
+  # The two or three journeys the product must get right. The last step of each
+  # path is drawn filled; anything with release: 2 is drawn dashed.
+  journeys:
+    - name: TODO Main job
+      paths:
+        - [TODO Entry point, TODO Step, TODO Step, TODO Confirm, TODO Outcome]
+    - name: TODO Record data
+      paths:
+        - [TODO List, TODO Add, "TODO Back to list, row highlighted"]
+        - [{label: TODO Upload file, release: 2}, {label: TODO Review rows, release: 2}]
+    - name: First run
+      paths:
+        - [TODO First step, TODO Second step, TODO Ready]
+
+  notes:
+    - title: Cross-links
+      body: TODO Which pages open which, already filtered
+    - title: Outside the sections
+      body: TODO Sign in, not found, error pages, return from third-party sign-in
+    - title: Open questions
+      body: TODO Anything the backend or API needs before this can ship
+
+# ================================================================ breakpoints
+breakpoints:
+  intro: >-
+    TODO Four breakpoints, chosen around the devices your users actually hold.
+    Each size gets its own answer for navigation, tables, filters and detail views.
+  devices:
+    - kind: phone
+      name: Phone
+      range: under 768
+      description: TODO Bottom tab bar, labelled tabs, one primary action in the header
+    - kind: tablet
+      name: Tablet
+      range: 768 to 1199
+      description: TODO An 88 px rail, icon above label
+    - kind: desktop
+      name: Laptop 1200 to 1599 · Desktop 1600 and up
+      description: TODO A 248 px sidebar with labels; detail opens in a right panel
+  columns: [Phone, Tablet, Laptop and desktop]
+  patterns:
+    - pattern: Page actions
+      cells: [TODO phone, TODO tablet, TODO laptop and desktop]
+    - pattern: Tables
+      cells: [TODO phone, TODO tablet, TODO laptop and desktop]
+    - pattern: Filters
+      cells: [TODO phone, TODO tablet, TODO laptop and desktop]
+    - pattern: Detail and edit
+      cells: [TODO phone, TODO tablet, TODO laptop and desktop]
+    - pattern: Forms
+      cells: [TODO phone, TODO tablet, TODO laptop and desktop]
+    - pattern: Multi-step tasks
+      cells:
+        - TODO phone
+        - text: TODO tablet and desktop share one answer
+          span: 2
+
+# Shown at the foot of the desktop sidebar
+shell:
+  nav_foot: [TODO Context line, TODO Connection status, TODO Signed-in user]
+
+# ================================================================ screens
+# Each entry is one board. Frames sit side by side and are scaled to fit.
+# device: phone | tablet | desktop. nav: the section to highlight (omit for
+# full-screen tasks). style: wire (default) or styled (uses the visual system).
+screens:
+  - title: TODO Home, phone
+    route: /
+    purpose: TODO What this screen must do, in one sentence
+    frames:
+      - device: phone
+        nav: TODO Home section
+        appbar: {left: TODO Product name, right: TODO Context}
+        blocks:
+          - eyebrow: Next step
+          - title: TODO The one thing to do next
+          - text: TODO Why, and by when
+          - button: TODO Primary action
+            full: true
+          - divider: true
+          - heading: TODO Summary
+          - rows:
+              - [TODO Label, TODO Value]
+              - {label: TODO Total, value: TODO Value, strong: true}
+          - heading: Recent
+            link: See all
+          - list:
+              - {title: TODO Item, meta: TODO Date and context, value: TODO Amount}
+
+  - title: TODO Main task, phone
+    route: /TODO-task/:id/submit
+    purpose: TODO A full-screen task. One decision per step, nothing sent until the last
+    frames:
+      - device: phone
+        appbar: {title: TODO Task name, right: "Exit ✕"}
+        blocks:
+          - stepper: {step: 1, total: 2}
+          - title: TODO Check
+            small: true
+          - rows:
+              - [TODO Label, TODO Value]
+        footer:
+          - button: TODO These are right
+            full: true
+      - device: phone
+        appbar: {left: "‹ Back", title: TODO Task name, right: Exit}
+        blocks:
+          - stepper: {step: 2, total: 2}
+          - title: TODO Confirm and send
+            small: true
+          - checkbox: TODO I confirm this is correct
+            boxed: true
+        footer:
+          - button: TODO Send
+            kind: disabled
+            full: true
+
+# ================================================================ Step 2: visual system
+visual:
+  intro: TODO Three or four words for the feel, then the few decisions that create it
+  accessibility_note: Every text colour passes WCAG AA on white. Status is always carried by words and shape as well as colour.
+  # token maps a colour onto the screen boards: ink, muted, primary, tint,
+  # shelf, rule, danger, warning (with `on` for its background).
+  # role: text (default, contrast is checked), fill, or line.
+  colours:
+    - {name: Ink, hex: "#1F2328", use: TODO Text and totals, token: ink}
+    - {name: Muted, hex: "#59636E", use: TODO Secondary text, token: muted}
+    - {name: TODO Brand, hex: "#0B5CAD", use: TODO Primary actions and links, token: primary}
+    - {name: Tint, hex: "#E7EFF8", use: TODO Selected row, role: fill, token: tint}
+    - {name: Shelf, hex: "#F4F5F6", use: TODO Navigation background, role: fill, token: shelf}
+    - {name: Rule, hex: "#D8DDE2", use: TODO Dividers, role: line, token: rule}
+    - {name: Amber, hex: "#8A4B00", on: "#FBEFD9", use: TODO Needs attention, token: warning}
+    - {name: Red, hex: "#A1262B", use: TODO Errors and destructive actions only, token: danger}
+  rules:
+    - TODO One rule about colour you will not break
+  type:
+    # Optional web-font stylesheet; system fonts are used if it cannot load.
+    # import_url: "https://fonts.googleapis.com/css2?family=...&display=swap"
+    serif: {family: "Georgia, serif"}
+    sans: {family: "'Helvetica Neue', Arial, sans-serif"}
+    scale:
+      - {role: Page title, font: serif, size: 32, line: 38, weight: 600, sample: TODO A real headline}
+      - {role: Section, font: serif, size: 22, line: 28, weight: 600, sample: TODO Section name}
+      - {role: Key figure, font: sans, size: 34, line: 40, weight: 600, tabular: true, sample: "1,234.00"}
+      - {role: Label, font: sans, size: 16, line: 24, weight: 600, sample: TODO Field label}
+      - {role: Body, font: sans, size: 16, line: 24, weight: 400, sample: TODO A real sentence from the product}
+      - {role: Caption, font: sans, size: 14, line: 20, weight: 400, muted: true, sample: TODO Supporting detail}
+  signature:
+    name: TODO The signature element
+    description: TODO The one visual idea that makes the product recognisable, and where it appears
+    marker: {at: 40, label: Today}
+    segments:
+      - {label: TODO Stage 1, sub: Done, state: done}
+      - {label: TODO Stage 2, sub: Current, state: current}
+      - {label: TODO Stage 3, sub: In progress, state: progress}
+      - {label: TODO Stage 4, sub: Not started, state: todo}
+  components:
+    - buttons:
+        - {value: TODO Primary, kind: primary}
+        - {value: TODO Secondary, kind: secondary}
+        - {value: Cancel, kind: ghost}
+        - {value: TODO Delete, kind: danger}
+        - {value: TODO Disabled, kind: disabled}
+    - fields:
+        - {label: TODO Label, hint: TODO Hint, value: TODO Value}
+        - {label: TODO Label, error: "TODO Say what to do, not what went wrong", value: TODO Bad value}
+    - status:
+        - {label: Done, shape: check}
+        - {label: TODO Current, shape: dot}
+        - {label: In progress, shape: half}
+        - {label: Not started, shape: dashed}
+        - {label: TODO Due soon, shape: warn}
+  tokens:
+    - [Spacing, "4, 8, 12, 16, 24, 32, 48, 64 px"]
+    - [Corners, "4 px controls, 8 px sheets and dialogs"]
+    - [Elevation, "None on the page. One shadow, only for sheets, menus and dialogs"]
+    - [Targets, "44 px minimum"]
